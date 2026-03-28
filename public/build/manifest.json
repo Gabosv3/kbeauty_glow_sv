@@ -1,0 +1,148 @@
+{
+  "_badge-DRsx_E39.js": {
+    "file": "assets/badge-DRsx_E39.js",
+    "name": "badge",
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_label-eh03LYlp.js",
+      "_heading-CRWN1QhF.js"
+    ]
+  },
+  "_heading-CRWN1QhF.js": {
+    "file": "assets/heading-CRWN1QhF.js",
+    "name": "heading",
+    "imports": [
+      "_wayfinder-CcycIHIr.js"
+    ]
+  },
+  "_label-eh03LYlp.js": {
+    "file": "assets/label-eh03LYlp.js",
+    "name": "label",
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_heading-CRWN1QhF.js"
+    ]
+  },
+  "_teams-Ch-MBK35.js": {
+    "file": "assets/teams-Ch-MBK35.js",
+    "name": "teams",
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_label-eh03LYlp.js",
+      "_heading-CRWN1QhF.js"
+    ]
+  },
+  "_transition-DeZrtqUR.js": {
+    "file": "assets/transition-DeZrtqUR.js",
+    "name": "transition",
+    "imports": [
+      "_wayfinder-CcycIHIr.js"
+    ]
+  },
+  "_wayfinder-CcycIHIr.js": {
+    "file": "assets/wayfinder-CcycIHIr.js",
+    "name": "wayfinder"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-P5BJFV7w.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.tsx": {
+    "file": "assets/app-DlddLsHz.js",
+    "name": "app",
+    "src": "resources/js/app.tsx",
+    "isEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_teams-Ch-MBK35.js",
+      "_label-eh03LYlp.js",
+      "_heading-CRWN1QhF.js"
+    ],
+    "dynamicImports": [
+      "resources/js/pages/dashboard.tsx",
+      "resources/js/pages/settings/appearance.tsx",
+      "resources/js/pages/settings/profile.tsx",
+      "resources/js/pages/teams/edit.tsx",
+      "resources/js/pages/teams/index.tsx",
+      "resources/js/pages/welcome.tsx"
+    ]
+  },
+  "resources/js/pages/dashboard.tsx": {
+    "file": "assets/dashboard-urbxku7U.js",
+    "name": "dashboard",
+    "src": "resources/js/pages/dashboard.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "resources/js/app.tsx"
+    ]
+  },
+  "resources/js/pages/settings/appearance.tsx": {
+    "file": "assets/appearance-DmgC0xXS.js",
+    "name": "appearance",
+    "src": "resources/js/pages/settings/appearance.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "resources/js/app.tsx",
+      "_heading-CRWN1QhF.js"
+    ]
+  },
+  "resources/js/pages/settings/profile.tsx": {
+    "file": "assets/profile-C7-TPxv3.js",
+    "name": "profile",
+    "src": "resources/js/pages/settings/profile.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_transition-DeZrtqUR.js",
+      "_label-eh03LYlp.js",
+      "resources/js/app.tsx",
+      "_heading-CRWN1QhF.js"
+    ]
+  },
+  "resources/js/pages/teams/edit.tsx": {
+    "file": "assets/edit-CrCbEX5k.js",
+    "name": "edit",
+    "src": "resources/js/pages/teams/edit.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_teams-Ch-MBK35.js",
+      "_transition-DeZrtqUR.js",
+      "_label-eh03LYlp.js",
+      "resources/js/app.tsx",
+      "_heading-CRWN1QhF.js",
+      "_badge-DRsx_E39.js"
+    ]
+  },
+  "resources/js/pages/teams/index.tsx": {
+    "file": "assets/teams-BpwOWRxP.js",
+    "name": "teams",
+    "src": "resources/js/pages/teams/index.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "_teams-Ch-MBK35.js",
+      "_label-eh03LYlp.js",
+      "resources/js/app.tsx",
+      "_heading-CRWN1QhF.js",
+      "_badge-DRsx_E39.js"
+    ]
+  },
+  "resources/js/pages/welcome.tsx": {
+    "file": "assets/welcome-CobZykD2.js",
+    "name": "welcome",
+    "src": "resources/js/pages/welcome.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_wayfinder-CcycIHIr.js",
+      "resources/js/app.tsx"
+    ]
+  }
+}
