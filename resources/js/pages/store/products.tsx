@@ -46,7 +46,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                         </div>
                     )}
                     {product.badge && product.in_stock && (
-                        <span className="absolute left-2 top-2 rounded-full bg-pink-500 px-2 py-0.5 text-xs font-semibold text-white">
+                        <span className="absolute left-2 top-2 rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-white">
                             {product.badge}
                         </span>
                     )}
@@ -57,7 +57,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                     )}
                 </div>
                 <div className="p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-pink-500">{product.brand}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand-gold">{product.brand}</p>
                     <p className="text-xs text-gray-400">{product.category}</p>
                     <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
                     <div className="mt-1.5 flex items-center gap-1">
@@ -84,7 +84,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                         </div>
                         <Button
                             size="sm"
-                            className="h-8 bg-pink-500 text-xs text-white hover:bg-pink-600"
+                            className="h-8 bg-brand-gold text-xs text-white hover:bg-brand-gold-dark"
                             disabled={!product.in_stock}
                         >
                             {product.in_stock ? 'Agregar' : 'Agotado'}
@@ -117,10 +117,10 @@ export default function StoreProducts({ products, categories, currentCategory }:
             <Head title="Productos — KBeauty Glow SV" />
 
             {/* Page header */}
-            <div className="bg-gradient-to-r from-pink-50 to-purple-50 py-10">
+            <div className="py-10" style={{ background: 'linear-gradient(to right, #FFF5F0, #F8EEE8)' }}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <nav className="mb-3 flex items-center gap-2 text-xs text-gray-400">
-                        <Link href="/store" className="hover:text-pink-500">
+                        <Link href="/store" className="hover:text-brand-gold">
                             Inicio
                         </Link>
                         <ChevronRight className="h-3 w-3" />
@@ -144,8 +144,8 @@ export default function StoreProducts({ products, categories, currentCategory }:
                             onClick={() => handleCategory(cat)}
                             className={`shrink-0 rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
                                 isActive(cat)
-                                    ? 'bg-pink-500 text-white'
-                                    : 'border bg-white text-gray-600 hover:border-pink-300 hover:text-pink-500'
+                                    ? 'bg-brand-gold text-white'
+                                    : 'border bg-white text-brand-text hover:border-brand-rose hover:text-brand-gold'
                             }`}
                         >
                             {cat === 'all' ? 'Todos' : cat}

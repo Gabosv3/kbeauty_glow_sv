@@ -6,7 +6,7 @@ use App\Http\Middleware\EnsureTeamMembership;
 use Illuminate\Support\Facades\Route;
 use Laravel\WorkOS\Http\Middleware\ValidateSessionWithWorkOS;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::get('/', [StoreController::class, 'index'])->name('home');
 
 // Store (public)
 Route::prefix('store')->name('store.')->group(function () {

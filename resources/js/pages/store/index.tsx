@@ -32,10 +32,10 @@ const categories = [
 ];
 
 const features = [
-    { icon: Truck, title: 'Envío Gratis', desc: 'En pedidos mayores a $50', color: 'text-pink-500' },
-    { icon: Shield, title: 'Productos Auténticos', desc: '100% K-Beauty originales', color: 'text-purple-500' },
-    { icon: RefreshCcw, title: 'Devoluciones Fáciles', desc: '30 días para devolver', color: 'text-green-500' },
-    { icon: Headphones, title: 'Soporte 24/7', desc: 'Siempre disponibles', color: 'text-blue-500' },
+    { icon: Truck, title: 'Envío Gratis', desc: 'En pedidos mayores a $50', color: 'text-brand-gold' },
+    { icon: Shield, title: 'Productos Auténticos', desc: '100% K-Beauty originales', color: 'text-brand-wood' },
+    { icon: RefreshCcw, title: 'Devoluciones Fáciles', desc: '30 días para devolver', color: 'text-brand-gold' },
+    { icon: Headphones, title: 'Soporte 24/7', desc: 'Siempre disponibles', color: 'text-brand-wood' },
 ];
 
 function ProductCard({ product }: Readonly<{ product: Product }>) {
@@ -54,7 +54,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                         className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                     {product.badge && (
-                        <span className="absolute left-2 top-2 rounded-full bg-pink-500 px-2 py-0.5 text-xs font-semibold text-white">
+                        <span className="absolute left-2 top-2 rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-white">
                             {product.badge}
                         </span>
                     )}
@@ -65,7 +65,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                     )}
                 </div>
                 <div className="p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-pink-500">{product.brand}</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-brand-gold">{product.brand}</p>
                     <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
                     <div className="mt-1.5 flex items-center gap-1">
                         {Array.from({ length: 5 }, (_, i) => (
@@ -85,7 +85,7 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                                 </span>
                             )}
                         </div>
-                        <Button size="sm" className="h-8 bg-pink-500 text-xs text-white hover:bg-pink-600">
+                        <Button size="sm" className="h-8 bg-brand-gold text-xs text-white hover:bg-brand-gold-dark">
                             Agregar
                         </Button>
                     </div>
@@ -101,26 +101,25 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
             <Head title="KBeauty Glow SV — Tu tienda de K-Beauty en El Salvador" />
 
             {/* Hero */}
-            <section className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 py-16 lg:py-24">
-                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full bg-pink-200 opacity-40 blur-3xl" />
-                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full bg-purple-200 opacity-40 blur-3xl" />
+            <section className="relative overflow-hidden py-16 lg:py-24" style={{ background: 'linear-gradient(135deg, #FFF5F0 0%, #FBF0EA 50%, #F5EEE8 100%)' }}>                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-40 blur-3xl" style={{ background: '#E6B8B1' }} />
+                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-30 blur-3xl" style={{ background: '#DCC6A9' }} />
                 </div>
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center text-center lg:flex-row lg:items-center lg:text-left lg:gap-12">
                         <div className="max-w-xl lg:flex-1">
-                            <Badge className="mb-4 border-pink-200 bg-pink-100 text-pink-700 hover:bg-pink-100">
+                            <Badge className="mb-4 border-brand-rose bg-[#F5E8E5] text-[#9A6055] hover:bg-[#F5E8E5]">
                                 ✨ Nuevos productos disponibles
                             </Badge>
                             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
                                 Descubre el secreto de la{' '}
-                                <span className="text-pink-500">belleza coreana</span>
+                                <span className="text-brand-gold">belleza coreana</span>
                             </h1>
                             <p className="mt-6 text-lg text-gray-600">
                                 Los mejores productos K-Beauty, 100% auténticos. Desde Seúl hasta El Salvador, traemos la revolución del skincare directamente a ti.
                             </p>
                             <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:items-start">
-                                <Button size="lg" className="bg-pink-500 px-8 text-white hover:bg-pink-600" asChild>
+                                <Button size="lg" className="bg-brand-gold px-8 text-white hover:bg-brand-gold-dark" asChild>
                                     <Link href="/store/products">
                                         <ShoppingBag className="mr-2 h-4 w-4" />
                                         Ver Catálogo
@@ -175,7 +174,7 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
             </section>
 
             {/* Featured Products */}
-            <section className="bg-gray-50 py-16">
+            <section className="bg-brand-cream-alt py-16">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="mb-10 flex items-end justify-between">
                         <div>
@@ -184,7 +183,7 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
                         </div>
                         <Link
                             href="/store/products"
-                            className="flex items-center text-sm font-medium text-pink-500 hover:text-pink-600"
+                            className="flex items-center text-sm font-medium text-brand-gold hover:text-brand-gold-dark"
                         >
                             Ver todos <ChevronRight className="h-4 w-4" />
                         </Link>
@@ -218,10 +217,10 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
             </section>
 
             {/* Newsletter CTA */}
-            <section className="bg-gradient-to-r from-pink-500 to-purple-600 py-16">
+            <section className="py-16" style={{ background: 'linear-gradient(to right, #D19A8A, #C4907E)' }}>
                 <div className="mx-auto max-w-xl px-4 text-center">
                     <h2 className="text-2xl font-bold text-white sm:text-3xl">¡Únete a la comunidad Glow!</h2>
-                    <p className="mt-2 text-pink-100">
+                    <p className="mt-2" style={{ color: '#F5E0DA' }}>
                         Recibe tips de K-Beauty, novedades y ofertas exclusivas.
                     </p>
                     <div className="mt-6 flex gap-2">
@@ -230,11 +229,11 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
                             placeholder="tu@correo.com"
                             className="flex-1 rounded-lg border-0 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
                         />
-                        <Button className="bg-white px-6 font-semibold text-pink-600 hover:bg-pink-50">
+                        <Button className="bg-white px-6 font-semibold hover:bg-[#FFF5F2]" style={{ color: '#D19A8A' }}>
                             Suscribir
                         </Button>
                     </div>
-                    <p className="mt-3 text-xs text-pink-200">✅ Sin spam. Puedes cancelar cuando quieras.</p>
+                    <p className="mt-3 text-xs" style={{ color: '#F5E0DA' }}>✅ Sin spam. Puedes cancelar cuando quieras.</p>
                 </div>
             </section>
         </>

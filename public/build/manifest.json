@@ -82,7 +82,7 @@
     "name": "wayfinder"
   },
   "resources/css/app.css": {
-    "file": "assets/app-Cjxngz_K.css",
+    "file": "assets/app-CwH9jDEb.css",
     "name": "app",
     "names": [
       "app.css"
@@ -91,7 +91,7 @@
     "isEntry": true
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-xVbfZ7kt.js",
+    "file": "assets/app--Hmxf4yJ.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -117,7 +117,7 @@
     ]
   },
   "resources/js/pages/dashboard.tsx": {
-    "file": "assets/dashboard-CWFi8tel.js",
+    "file": "assets/dashboard-0DmGk2EA.js",
     "name": "dashboard",
     "src": "resources/js/pages/dashboard.tsx",
     "isDynamicEntry": true,
@@ -127,7 +127,7 @@
     ]
   },
   "resources/js/pages/settings/appearance.tsx": {
-    "file": "assets/appearance-BBPHmP8C.js",
+    "file": "assets/appearance-PQu6ijN4.js",
     "name": "appearance",
     "src": "resources/js/pages/settings/appearance.tsx",
     "isDynamicEntry": true,
@@ -138,7 +138,7 @@
     ]
   },
   "resources/js/pages/settings/profile.tsx": {
-    "file": "assets/profile-CHSgHenf.js",
+    "file": "assets/profile-CvVwG64m.js",
     "name": "profile",
     "src": "resources/js/pages/settings/profile.tsx",
     "isDynamicEntry": true,
@@ -152,7 +152,7 @@
     ]
   },
   "resources/js/pages/store/index.tsx": {
-    "file": "assets/store-BWkLmgmp.js",
+    "file": "assets/store-dw_Ar_jT.js",
     "name": "store",
     "src": "resources/js/pages/store/index.tsx",
     "isDynamicEntry": true,
@@ -167,7 +167,7 @@
     ]
   },
   "resources/js/pages/store/product.tsx": {
-    "file": "assets/product-DBOv1PDw.js",
+    "file": "assets/product-uh-FuJoN.js",
     "name": "product",
     "src": "resources/js/pages/store/product.tsx",
     "isDynamicEntry": true,
@@ -182,7 +182,7 @@
     ]
   },
   "resources/js/pages/store/products.tsx": {
-    "file": "assets/products-hssfL86Y.js",
+    "file": "assets/products-C9ETkMk5.js",
     "name": "products",
     "src": "resources/js/pages/store/products.tsx",
     "isDynamicEntry": true,
@@ -195,7 +195,7 @@
     ]
   },
   "resources/js/pages/teams/edit.tsx": {
-    "file": "assets/edit-CZV7IHQl.js",
+    "file": "assets/edit-Dtxgrpd0.js",
     "name": "edit",
     "src": "resources/js/pages/teams/edit.tsx",
     "isDynamicEntry": true,
@@ -211,7 +211,7 @@
     ]
   },
   "resources/js/pages/teams/index.tsx": {
-    "file": "assets/teams-DuWH-x8U.js",
+    "file": "assets/teams-PLSOceGV.js",
     "name": "teams",
     "src": "resources/js/pages/teams/index.tsx",
     "isDynamicEntry": true,
@@ -225,7 +225,7 @@
     ]
   },
   "resources/js/pages/welcome.tsx": {
-    "file": "assets/welcome-zytQhtEH.js",
+    "file": "assets/welcome-BCpRE6hk.js",
     "name": "welcome",
     "src": "resources/js/pages/welcome.tsx",
     "isDynamicEntry": true,

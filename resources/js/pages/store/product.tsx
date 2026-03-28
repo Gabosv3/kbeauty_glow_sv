@@ -66,17 +66,17 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Breadcrumb */}
                 <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-gray-400">
-                    <Link href="/store" className="hover:text-pink-500">
+                    <Link href="/store" className="hover:text-brand-gold">
                         Inicio
                     </Link>
                     <ChevronRight className="h-3 w-3" />
-                    <Link href="/store/products" className="hover:text-pink-500">
+                        <Link href="/store/products" className="hover:text-brand-gold">
                         Productos
                     </Link>
                     <ChevronRight className="h-3 w-3" />
                     <Link
                         href={`/store/products?category=${product.category}`}
-                        className="hover:text-pink-500"
+                        className="hover:text-brand-gold"
                     >
                         {product.category}
                     </Link>
@@ -127,7 +127,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                     {/* Info */}
                     <div>
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-bold uppercase tracking-wide text-pink-500">
+                            <span className="text-sm font-bold uppercase tracking-wide text-brand-gold">
                                 {product.brand}
                             </span>
                             <span className="text-gray-300">·</span>
@@ -203,7 +203,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                             <div className="flex gap-3">
                                 <Button
                                     size="lg"
-                                    className="flex-1 bg-pink-500 text-white hover:bg-pink-600"
+                                    className="flex-1 bg-brand-gold text-white hover:bg-brand-gold-dark"
                                     disabled={!product.in_stock}
                                 >
                                     <ShoppingCart className="mr-2 h-4 w-4" />
@@ -212,7 +212,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                                 <Button
                                     size="lg"
                                     variant="outline"
-                                    className="border-pink-200 text-pink-500 hover:bg-pink-50"
+                                    className="border-brand-rose text-brand-gold hover:bg-[#F5E8E5]"
                                     aria-label="Agregar a lista de deseos"
                                 >
                                     <Heart className="h-4 w-4" />
@@ -227,17 +227,17 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                         </div>
 
                         {/* Shipping info */}
-                        <div className="mt-6 space-y-2 rounded-xl bg-gray-50 p-4">
+                        <div className="mt-6 space-y-2 rounded-xl p-4" style={{ backgroundColor: '#FFF5F0' }}>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Truck className="h-4 w-4 text-pink-500" />
+                                <Truck className="h-4 w-4 text-brand-gold" />
                                 <span>Envío gratis en pedidos mayores a $50</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Package className="h-4 w-4 text-pink-500" />
+                                <Package className="h-4 w-4 text-brand-gold" />
                                 <span>Entrega estimada: 3-5 días hábiles</span>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <Shield className="h-4 w-4 text-pink-500" />
+                                <Shield className="h-4 w-4 text-brand-gold" />
                                 <span>Producto 100% auténtico garantizado</span>
                             </div>
                         </div>
@@ -253,8 +253,8 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                                 onClick={() => setActiveTab(tab.id)}
                                 className={`px-6 py-3 text-sm font-medium transition-colors ${
                                     activeTab === tab.id
-                                        ? 'border-b-2 border-pink-500 text-pink-500'
-                                        : 'text-gray-500 hover:text-gray-700'
+                                        ? 'border-b-2 border-brand-gold text-brand-gold'
+                                        : 'text-gray-500 hover:text-brand-text'
                                 }`}
                             >
                                 {tab.label}
@@ -304,7 +304,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                                             />
                                         </div>
                                         <div className="p-3">
-                                            <p className="text-xs font-semibold text-pink-500">{related.brand}</p>
+                                            <p className="text-xs font-semibold text-brand-gold">{related.brand}</p>
                                             <h3 className="mt-0.5 line-clamp-2 text-xs font-semibold text-gray-900">
                                                 {related.name}
                                             </h3>
