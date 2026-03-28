@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('current_team_id')
                 ->nullable()
-                ->after('password')
+                ->after('workos_id')
                 ->constrained('teams')
                 ->nullOnDelete();
         });
