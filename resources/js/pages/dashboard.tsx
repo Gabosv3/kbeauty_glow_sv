@@ -1,6 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { dashboard } from '@/routes';
+import { dashboard } from '@/routes/admin';
 
 export default function Dashboard() {
     return (
@@ -26,11 +26,11 @@ export default function Dashboard() {
     );
 }
 
-Dashboard.layout = (props: { currentTeam?: { slug: string } | null }) => ({
+Dashboard.layout = () => ({
     breadcrumbs: [
         {
             title: 'Dashboard',
-            href: props.currentTeam ? dashboard(props.currentTeam.slug) : '/',
+            href: dashboard.url(),
         },
     ],
 });

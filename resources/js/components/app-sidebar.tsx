@@ -1,7 +1,8 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, FolderGit2, LayoutGrid } from 'lucide-react';
+import { Award, LayoutGrid, Package, ShoppingBag, ShoppingCart, Tag, Truck, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
-import { NavFooter } from '@/components/nav-footer';
+import AppearanceToggleTab from '@/components/appearance-tabs';
+import { NavAdmin } from '@/components/nav-admin';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
@@ -14,14 +15,12 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
+import { admin } from '@/lib/admin-routes';
+import { dashboard } from '@/routes/admin';
 import type { NavItem } from '@/types';
 
 export function AppSidebar() {
-    const page = usePage();
-    const dashboardUrl = page.props.currentTeam
-        ? dashboard(page.props.currentTeam.slug)
-        : '/';
+    const dashboardUrl = dashboard.url();
 
     const mainNavItems: NavItem[] = [
         {
@@ -31,16 +30,41 @@ export function AppSidebar() {
         },
     ];
 
-    const footerNavItems: NavItem[] = [
+    const adminNavItems: NavItem[] = [
         {
-            title: 'Repository',
-            href: 'https://github.com/laravel/react-starter-kit',
-            icon: FolderGit2,
+            title: 'Usuarios',
+            href: admin.users.index,
+            icon: Users,
         },
         {
-            title: 'Documentation',
-            href: 'https://laravel.com/docs/starter-kits#react',
-            icon: BookOpen,
+            title: 'Categorías',
+            href: admin.categories.index,
+            icon: Tag,
+        },
+        {
+            title: 'Marcas',
+            href: admin.brands.index,
+            icon: Award,
+        },
+        {
+            title: 'Productos',
+            href: admin.products.index,
+            icon: Package,
+        },
+        {
+            title: 'Proveedores',
+            href: admin.suppliers.index,
+            icon: Truck,
+        },
+        {
+            title: 'Compras',
+            href: admin.purchases.index,
+            icon: ShoppingCart,
+        },
+        {
+            title: 'Ventas',
+            href: admin.sales.index,
+            icon: ShoppingBag,
         },
     ];
 
@@ -65,10 +89,13 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                {<NavAdmin items={adminNavItems} />}
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                <div className="px-2 py-2 group-data-[collapsible=icon]:hidden">
+                    <AppearanceToggleTab className="w-full justify-center" />
+                </div>
                 <NavUser />
             </SidebarFooter>
         </Sidebar>

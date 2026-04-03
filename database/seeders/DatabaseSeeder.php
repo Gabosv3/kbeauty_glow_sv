@@ -2,22 +2,41 @@
 
 namespace Database\Seeders;
 
+use App\Models\Team;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Crear usuario primero (sin current_team_id aún)
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@kbeauty.com'],
+            [
+                'name'      => 'Administrador',
+                'password'  => Hash::make('admin123'),
+                'workos_id' => 'local_admin_001',
+                'avatar'    => '',
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // 2. Crear equipo (sin user_id — no existe en la tabla)
+        $team = Team::firstOrCreate(
+            ['slug' => 'kbeauty-glow'],
+            [
+                'name'        => 'KBeauty Glow',
+                'is_personal' => false,
+            ]
+        );
+
+        // 3. Asignar equipo actual al usuario
+        $admin->update(['current_team_id' => $team->id]);
+
+        // 4. Vincular admin al equipo como propietario
+        if (! $team->members()->where('user_id', $admin->id)->exists()) {
+            $team->members()->attach($admin->id, ['role' => 'owner']);
+        }
     }
 }

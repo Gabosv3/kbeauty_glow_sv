@@ -8,8 +8,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { UserInfo } from '@/components/user-info';
 import { useMobileNavigation } from '@/hooks/use-mobile-navigation';
-import { logout } from '@/routes';
-import { edit } from '@/routes/profile';
+import { admin } from '@/lib/admin-routes';
+import { logout } from '@/routes/admin';
 import type { User } from '@/types';
 
 type Props = {
@@ -36,12 +36,12 @@ export function UserMenuContent({ user }: Props) {
                 <DropdownMenuItem asChild>
                     <Link
                         className="block w-full cursor-pointer"
-                        href={edit()}
+                        href={admin.dashboard}
                         prefetch
                         onClick={cleanup}
                     >
                         <Settings className="mr-2" />
-                        Settings
+                        Dashboard
                     </Link>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
@@ -49,13 +49,14 @@ export function UserMenuContent({ user }: Props) {
             <DropdownMenuItem asChild>
                 <Link
                     className="block w-full cursor-pointer"
-                    href={logout()}
+                    href={logout.url()}
+                    method="post"
                     as="button"
                     onClick={handleLogout}
                     data-test="logout-button"
                 >
                     <LogOut className="mr-2" />
-                    Log out
+                    Cerrar sesión
                 </Link>
             </DropdownMenuItem>
         </>
