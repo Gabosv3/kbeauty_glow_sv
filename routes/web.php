@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
+use App\Http\Controllers\Admin\PurchaseShipmentController;
 use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -67,8 +68,14 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
         Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
         Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
         Route::get('purchases/{purchase}', [PurchaseController::class, 'show'])->name('purchases.show');
-        Route::post('purchases/{purchase}/receive', [PurchaseController::class, 'receive'])->name('purchases.receive');
+        Route::post('purchases/{purchase}/order', [PurchaseController::class, 'order'])->name('purchases.order');
         Route::post('purchases/{purchase}/cancel', [PurchaseController::class, 'cancel'])->name('purchases.cancel');
+        // Paquetes de envío
+        Route::post('purchases/{purchase}/shipments', [PurchaseShipmentController::class, 'store'])->name('purchases.shipments.store');
+        Route::put('shipments/{shipment}', [PurchaseShipmentController::class, 'update'])->name('shipments.update');
+        Route::delete('shipments/{shipment}', [PurchaseShipmentController::class, 'destroy'])->name('shipments.destroy');
+        Route::post('shipments/{shipment}/receive', [PurchaseShipmentController::class, 'receive'])->name('shipments.receive');
+        Route::post('shipments/{shipment}/not-received', [PurchaseShipmentController::class, 'notReceived'])->name('shipments.not-received');
 
         // Ventas
         Route::get('sales', [SaleController::class, 'index'])->name('sales.index');

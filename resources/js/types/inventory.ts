@@ -62,15 +62,25 @@ export type PurchaseItem = {
     quantity: number;
     unit_cost: string;
     subtotal: string;
-    shipping_code: string | null;
-    tax: string;
+    shipment_id: number | null;
     product?: Pick<Product, 'id' | 'name'>;
+};
+
+export type PurchaseShipment = {
+    id: number;
+    purchase_id: number;
+    package_number: string;
+    tracking_number: string | null;
+    tax: string;
+    status: 'in_transit' | 'received' | 'not_received';
+    received_at: string | null;
+    items?: PurchaseItem[];
 };
 
 export type Purchase = {
     id: number;
     reference: string;
-    status: 'pending' | 'received' | 'cancelled';
+    status: 'pending' | 'ordered' | 'received' | 'cancelled';
     subtotal: string;
     tax: string;
     discount: string;
@@ -80,6 +90,7 @@ export type Purchase = {
     supplier?: Pick<Supplier, 'id' | 'name'> | null;
     user?: { id: number; name: string } | null;
     items?: PurchaseItem[];
+    shipments?: PurchaseShipment[];
     created_at: string;
 };
 

@@ -30,8 +30,9 @@ class PurchaseController extends AdminController
 
         $products = Product::where('team_id', $currentTeam->id)
             ->where('active', true)
+            ->with('brand:id,name')
             ->orderBy('name')
-            ->get(['id', 'name', 'cost_price', 'stock']);
+            ->get(['id', 'name', 'cost_price', 'stock', 'brand_id']);
 
         return Inertia::render('admin/purchases/index', [
             'purchases' => $purchases,
@@ -44,7 +45,7 @@ class PurchaseController extends AdminController
     {
         abort_unless($purchase->team_id === $this->currentTeam()->id, 403);
 
-        $purchase->load(['supplier', 'user', 'items.product']);
+        $purchase->load(['supplier', 'user', 'items.product', 'shipments.items.product']);
 
         return Inertia::render('admin/purchases/show', [
             'purchase' => $purchase,
@@ -62,19 +63,14 @@ class PurchaseController extends AdminController
             'items.*.product_id' => ['required', 'exists:products,id'],
             'items.*.quantity' => ['required', 'integer', 'min:1'],
             'items.*.unit_cost' => ['required', 'numeric', 'min:0'],
-            'items.*.shipping_code' => ['nullable', 'string', 'max:100'],
-            'items.*.item_tax' => ['numeric', 'min:0'],
         ]);
 
         DB::transaction(function () use ($validated, $currentTeam, $request) {
             $subtotal = collect($validated['items'])->sum(
                 fn ($item) => $item['quantity'] * $item['unit_cost']
             );
-            $tax = collect($validated['items'])->sum(
-                fn ($item) => $item['item_tax'] ?? 0
-            );
             $discount = $validated['discount'] ?? 0;
-            $total = $subtotal + $tax - $discount;
+            $total = $subtotal - $discount; // tax added later when shipments are received
 
             $purchase = Purchase::create([
                 'team_id' => $currentTeam->id,
@@ -83,7 +79,7 @@ class PurchaseController extends AdminController
                 'reference' => 'PO-' . strtoupper(Str::random(8)),
                 'status' => 'pending',
                 'subtotal' => $subtotal,
-                'tax' => $tax,
+                'tax' => 0,
                 'discount' => $discount,
                 'total' => $total,
                 'notes' => $validated['notes'] ?? null,
@@ -95,8 +91,6 @@ class PurchaseController extends AdminController
                     'quantity' => $item['quantity'],
                     'unit_cost' => $item['unit_cost'],
                     'subtotal' => $item['quantity'] * $item['unit_cost'],
-                    'shipping_code' => $item['shipping_code'] ?? null,
-                    'tax' => $item['item_tax'] ?? 0,
                 ]);
             }
         });
@@ -104,21 +98,20 @@ class PurchaseController extends AdminController
         return back()->with('success', 'Compra registrada correctamente.');
     }
 
-    public function receive(Purchase $purchase): RedirectResponse
+    public function order(Purchase $purchase): RedirectResponse
     {
         abort_unless($purchase->team_id === $this->currentTeam()->id, 403);
-        abort_if($purchase->status !== 'pending', 422, 'Esta compra ya fue procesada.');
+        abort_if($purchase->status !== 'pending', 422, 'Solo se pueden ordenar compras pendientes.');
 
-        $purchase->load('items');
-        $purchase->receive();
+        $purchase->update(['status' => 'ordered']);
 
-        return back()->with('success', 'Compra recibida. Stock actualizado.');
+        return back()->with('success', 'Orden enviada al proveedor.');
     }
 
     public function cancel(Purchase $purchase): RedirectResponse
     {
         abort_unless($purchase->team_id === $this->currentTeam()->id, 403);
-        abort_if($purchase->status !== 'pending', 422, 'Solo se pueden cancelar compras pendientes.');
+        abort_if(!in_array($purchase->status, ['pending', 'ordered']), 422, 'Esta compra no puede cancelarse.');
 
         $purchase->update(['status' => 'cancelled']);
 

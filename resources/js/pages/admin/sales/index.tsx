@@ -99,6 +99,7 @@ export default function SalesIndex({ sales, products }: Props) {
                         <thead className="border-b bg-muted/50">
                             <tr>
                                 <th className="px-4 py-3 text-left font-medium">Referencia</th>
+                                <th className="px-4 py-3 text-left font-medium">Fecha</th>
                                 <th className="px-4 py-3 text-left font-medium">Cliente</th>
                                 <th className="px-4 py-3 text-left font-medium">Pago</th>
                                 <th className="px-4 py-3 text-left font-medium">Vendedor</th>
@@ -111,6 +112,10 @@ export default function SalesIndex({ sales, products }: Props) {
                             {sales.map((s) => (
                                 <tr key={s.id} className="hover:bg-muted/30">
                                     <td className="px-4 py-3 font-mono text-xs">{s.reference}</td>
+                                    <td className="px-4 py-3 text-muted-foreground">
+                                        <div>{new Date(s.created_at).toLocaleDateString('es')}</div>
+                                        <div className="text-xs">{new Date(s.created_at).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</div>
+                                    </td>
                                     <td className="px-4 py-3">{s.customer_name ?? '—'}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{paymentLabels[s.payment_method] ?? s.payment_method}</td>
                                     <td className="px-4 py-3 text-muted-foreground">{s.user?.name ?? '—'}</td>
@@ -138,7 +143,7 @@ export default function SalesIndex({ sales, products }: Props) {
                             ))}
                             {sales.length === 0 && (
                                 <tr>
-                                    <td colSpan={7} className="px-4 py-10 text-center text-muted-foreground">
+                                        <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
                                         No hay ventas registradas.
                                     </td>
                                 </tr>
@@ -150,13 +155,22 @@ export default function SalesIndex({ sales, products }: Props) {
 
             {/* Modal nueva venta */}
             <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-                <DialogContent className="max-w-3xl">
+                <DialogContent className="sm:max-w-5xl max-h-[90vh] overflow-y-auto">
                     <DialogHeader><DialogTitle>Nueva Venta</DialogTitle></DialogHeader>
                     <form onSubmit={submitCreate} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="grid gap-2">
                                 <Label>Nombre del cliente</Label>
-                                <Input value={form.data.customer_name} onChange={e => form.setData('customer_name', e.target.value)} />
+                                <div className="flex gap-2">
+                                    <Input value={form.data.customer_name} onChange={e => form.setData('customer_name', e.target.value)} />
+                                    <button
+                                        type="button"
+                                        onClick={() => form.setData('customer_name', 'Clientes Varios')}
+                                        className="shrink-0 rounded-md border px-3 text-xs text-muted-foreground hover:bg-muted transition-colors"
+                                    >
+                                        Varios
+                                    </button>
+                                </div>
                             </div>
                             <div className="grid gap-2">
                                 <Label>Email del cliente</Label>

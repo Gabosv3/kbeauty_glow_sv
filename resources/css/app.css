@@ -150,3 +150,17 @@
         @apply bg-background text-foreground;
     }
 }
+
+@media print {
+    body > * { display: none !important; }
+    #invoice-print { display: block !important; }
+    #invoice-print {
+        position: fixed;
+        inset: 0;
+        background: white;
+        color: black;
+        font-family: sans-serif;
+        font-size: 13px;
+        padding: 32px;
+    }
+}

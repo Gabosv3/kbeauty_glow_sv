@@ -48,15 +48,8 @@ class Purchase extends Model
         return $this->hasMany(PurchaseItem::class);
     }
 
-    public function receive(): void
+    public function shipments(): HasMany
     {
-        $this->update([
-            'status' => 'received',
-            'received_at' => now(),
-        ]);
-
-        foreach ($this->items as $item) {
-            $item->product->increment('stock', $item->quantity);
-        }
+        return $this->hasMany(PurchaseShipment::class);
     }
 }
