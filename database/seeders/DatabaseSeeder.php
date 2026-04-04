@@ -38,5 +38,12 @@ class DatabaseSeeder extends Seeder
         if (! $team->members()->where('user_id', $admin->id)->exists()) {
             $team->members()->attach($admin->id, ['role' => 'owner']);
         }
+
+        // 5. Ejecutar seeders de datos
+        $this->call([
+            BrandSeeder::class,
+            CategorySeeder::class,
+            ProductSeeder::class,
+        ]);
     }
 }
