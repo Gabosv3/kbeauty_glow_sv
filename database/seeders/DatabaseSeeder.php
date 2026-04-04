@@ -44,6 +44,13 @@ class DatabaseSeeder extends Seeder
             BrandSeeder::class,
             CategorySeeder::class,
             ProductSeeder::class,
+            ProductImageSeeder::class,
+            SupplierSeeder::class,
+            PurchaseSeeder::class,
+            PurchaseShipmentSeeder::class,
+            PurchaseItemSeeder::class,
+            SaleSeeder::class,
+            SaleItemSeeder::class,
         ]);
     }
 }
