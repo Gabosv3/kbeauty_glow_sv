@@ -1,7 +1,8 @@
 import { Head, Link } from '@inertiajs/react';
-import { ShoppingBag, ChevronRight, Truck, Shield, RefreshCcw, Headphones, Star } from 'lucide-react';
+import { ShoppingBag, ChevronRight, Truck, Shield, RefreshCcw, Headphones, Package, ShoppingCart } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/cart-context';
 
 interface Product {
     id: number;
@@ -11,10 +12,7 @@ interface Product {
     category: string;
     price: number;
     original_price: number | null;
-    image: string;
-    rating: number;
-    reviews: number;
-    badge: string | null;
+    image: string | null;
     in_stock: boolean;
 }
 
@@ -23,12 +21,14 @@ interface Props {
 }
 
 const categories = [
-    { name: 'Serums', emoji: '💧', description: 'Activos concentrados', href: '/store/products?category=Serums', bg: 'bg-purple-50 hover:bg-purple-100' },
-    { name: 'Toners', emoji: '🌿', description: 'Balance e hidratación', href: '/store/products?category=Toners', bg: 'bg-green-50 hover:bg-green-100' },
-    { name: 'Cleansers', emoji: '✨', description: 'Limpieza profunda', href: '/store/products?category=Cleansers', bg: 'bg-pink-50 hover:bg-pink-100' },
-    { name: 'Masks', emoji: '🎭', description: 'Tratamientos intensivos', href: '/store/products?category=Masks', bg: 'bg-blue-50 hover:bg-blue-100' },
-    { name: 'Sunscreen', emoji: '☀️', description: 'Protección solar', href: '/store/products?category=Sunscreen', bg: 'bg-amber-50 hover:bg-amber-100' },
-    { name: 'Makeup', emoji: '💄', description: 'K-Beauty makeup', href: '/store/products?category=Makeup', bg: 'bg-rose-50 hover:bg-rose-100' },
+    { name: 'Serums', emoji: '💧', description: 'Activos concentrados', href: '/store/products?category=serums', bg: 'bg-purple-50 hover:bg-purple-100' },
+    { name: 'Protector solar', emoji: '☀️', description: 'Protección UV K-Beauty', href: '/store/products?category=Protector+solar', bg: 'bg-amber-50 hover:bg-amber-100' },
+    { name: 'Parches', emoji: '🩹', description: 'Parches para el rostro', href: '/store/products?category=Parches', bg: 'bg-blue-50 hover:bg-blue-100' },
+    { name: 'Mascarillas nocturnas', emoji: '🌙', description: 'Tratamiento mientras duermes', href: '/store/products?category=mascarillas+nocturnas', bg: 'bg-indigo-50 hover:bg-indigo-100' },
+    { name: 'Tónico Exfoliante', emoji: '✨', description: 'Renueva y suaviza la piel', href: '/store/products?category=T%C3%B3nico+Exfoliante', bg: 'bg-pink-50 hover:bg-pink-100' },
+    { name: 'Limpiador en aceite', emoji: '🫧', description: 'Doble limpieza', href: '/store/products?category=Limpiador+en+aceite', bg: 'bg-green-50 hover:bg-green-100' },
+    { name: 'Limpiador en espuma', emoji: '🌿', description: 'Limpieza profunda suave', href: '/store/products?category=Limpiador+en+espuma', bg: 'bg-teal-50 hover:bg-teal-100' },
+    { name: 'Vitaminas', emoji: '💊', description: 'Suplementos y nutrición', href: '/store/products?category=Vitaminas', bg: 'bg-rose-50 hover:bg-rose-100' },
 ];
 
 const features = [
@@ -39,24 +39,32 @@ const features = [
 ];
 
 function ProductCard({ product }: Readonly<{ product: Product }>) {
+    const { addItem, setCartOpen } = useCart();
     const discount =
         product.original_price === null
             ? null
             : Math.round(((product.original_price - product.price) / product.original_price) * 100);
 
+    function handleAdd(e: React.MouseEvent) {
+        e.preventDefault();
+        addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image });
+        setCartOpen(true);
+    }
+
     return (
         <Link href={`/store/products/${product.slug}`} className="group block">
             <div className="overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md">
                 <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <img
-                        src={product.image}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
-                    {product.badge && (
-                        <span className="absolute left-2 top-2 rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-white">
-                            {product.badge}
-                        </span>
+                    {product.image ? (
+                        <img
+                            src={product.image}
+                            alt={product.name}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="flex h-full items-center justify-center text-gray-200">
+                            <Package className="h-16 w-16" />
+                        </div>
                     )}
                     {discount !== null && (
                         <span className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
@@ -67,15 +75,6 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                 <div className="p-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-brand-gold">{product.brand}</p>
                     <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
-                    <div className="mt-1.5 flex items-center gap-1">
-                        {Array.from({ length: 5 }, (_, i) => (
-                            <Star
-                                key={`star-${i}`}
-                                className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`}
-                            />
-                        ))}
-                        <span className="text-xs text-gray-500">({product.reviews})</span>
-                    </div>
                     <div className="mt-3 flex items-center justify-between">
                         <div className="flex items-baseline gap-1.5">
                             <span className="font-bold text-gray-900">${product.price.toFixed(2)}</span>
@@ -85,9 +84,17 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                                 </span>
                             )}
                         </div>
-                        <Button size="sm" className="h-8 bg-brand-gold text-xs text-white hover:bg-brand-gold-dark">
-                            Agregar
-                        </Button>
+                        {product.in_stock ? (
+                            <button
+                                onClick={handleAdd}
+                                className="flex h-8 items-center gap-1.5 rounded-md bg-brand-gold px-3 text-xs font-medium text-white hover:bg-brand-gold-dark"
+                            >
+                                <ShoppingCart className="h-3.5 w-3.5" />
+                                Agregar
+                            </button>
+                        ) : (
+                            <span className="rounded-md bg-gray-100 px-3 py-1.5 text-xs text-gray-400">Agotado</span>
+                        )}
                     </div>
                 </div>
             </div>
@@ -101,14 +108,14 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
             <Head title="KBeauty Glow SV — Tu tienda de K-Beauty en El Salvador" />
 
             {/* Hero */}
-            <section className="relative overflow-hidden py-16 lg:py-24" style={{ background: 'linear-gradient(135deg, #FFF5F0 0%, #FBF0EA 50%, #F5EEE8 100%)' }}>                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-40 blur-3xl" style={{ background: '#E6B8B1' }} />
-                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-30 blur-3xl" style={{ background: '#DCC6A9' }} />
+            <section className="relative overflow-hidden py-16 lg:py-24" style={{ background: 'linear-gradient(135deg, #F8F6FF 0%, #F0EDFF 50%, #E8E4F9 100%)' }}>                <div className="pointer-events-none absolute inset-0">
+                    <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-40 blur-3xl" style={{ background: '#D5CEFB' }} />
+                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-30 blur-3xl" style={{ background: '#C5BEED' }} />
                 </div>
                 <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="flex flex-col items-center text-center lg:flex-row lg:items-center lg:text-left lg:gap-12">
                         <div className="max-w-xl lg:flex-1">
-                            <Badge className="mb-4 border-brand-rose bg-[#F5E8E5] text-[#9A6055] hover:bg-[#F5E8E5]">
+                            <Badge className="mb-4 border-brand-rose bg-[#EEE9FB] text-[#6B5FAE] hover:bg-[#EEE9FB]">
                                 ✨ Nuevos productos disponibles
                             </Badge>
                             <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
@@ -125,7 +132,7 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
                                         Ver Catálogo
                                     </Link>
                                 </Button>
-                                <Button size="lg" variant="outline" asChild>
+                                <Button size="lg" variant="outline" className="border-brand-rose bg-white text-brand-text hover:bg-brand-cream" asChild>
                                     <Link href="/store/products?category=Serums">
                                         Explorar Serums
                                         <ChevronRight className="ml-1 h-4 w-4" />
@@ -157,15 +164,15 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
                         <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Compra por Categoría</h2>
                         <p className="mt-2 text-gray-500">Encuentra exactamente lo que tu piel necesita</p>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                         {categories.map((cat) => (
                             <Link
                                 key={cat.name}
                                 href={cat.href}
-                                className={`flex flex-col items-center rounded-xl p-4 text-center transition-colors ${cat.bg}`}
+                                className={`flex flex-col items-center rounded-xl p-6 text-center transition-colors ${cat.bg}`}
                             >
-                                <span className="text-3xl">{cat.emoji}</span>
-                                <span className="mt-2 text-sm font-semibold text-gray-800">{cat.name}</span>
+                                <span className="text-4xl">{cat.emoji}</span>
+                                <span className="mt-3 text-sm font-semibold text-gray-800">{cat.name}</span>
                                 <span className="mt-1 text-xs text-gray-500">{cat.description}</span>
                             </Link>
                         ))}
@@ -217,10 +224,10 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
             </section>
 
             {/* Newsletter CTA */}
-            <section className="py-16" style={{ background: 'linear-gradient(to right, #D19A8A, #C4907E)' }}>
+            <section className="py-16" style={{ background: 'linear-gradient(to right, #9B8EC4, #7B6BAE)' }}>
                 <div className="mx-auto max-w-xl px-4 text-center">
                     <h2 className="text-2xl font-bold text-white sm:text-3xl">¡Únete a la comunidad Glow!</h2>
-                    <p className="mt-2" style={{ color: '#F5E0DA' }}>
+                    <p className="mt-2" style={{ color: '#E8E4F9' }}>
                         Recibe tips de K-Beauty, novedades y ofertas exclusivas.
                     </p>
                     <div className="mt-6 flex gap-2">
@@ -229,11 +236,11 @@ export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
                             placeholder="tu@correo.com"
                             className="flex-1 rounded-lg border-0 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
                         />
-                        <Button className="bg-white px-6 font-semibold hover:bg-[#FFF5F2]" style={{ color: '#D19A8A' }}>
+                        <Button className="bg-white px-6 font-semibold hover:bg-[#F0EDFF]" style={{ color: '#9B8EC4' }}>
                             Suscribir
                         </Button>
                     </div>
-                    <p className="mt-3 text-xs" style={{ color: '#F5E0DA' }}>✅ Sin spam. Puedes cancelar cuando quieras.</p>
+                    <p className="mt-3 text-xs" style={{ color: '#E8E4F9' }}>✅ Sin spam. Puedes cancelar cuando quieras.</p>
                 </div>
             </section>
         </>

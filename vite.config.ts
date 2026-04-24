@@ -22,6 +22,7 @@ export default defineConfig({
         tailwindcss(),
         wayfinder({
             formVariants: true,
+            command: 'C:/laragon/bin/php/php-8.4.13-Win32-vs17-x64/php.exe artisan wayfinder:generate',
         }),
     ],
 });

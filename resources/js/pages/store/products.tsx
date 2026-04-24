@@ -1,6 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Star, SlidersHorizontal, ChevronRight } from 'lucide-react';
+import { SlidersHorizontal, ChevronRight, Package, ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useCart } from '@/contexts/cart-context';
 
 interface Product {
     id: number;
@@ -10,10 +11,7 @@ interface Product {
     category: string;
     price: number;
     original_price: number | null;
-    image: string;
-    rating: number;
-    reviews: number;
-    badge: string | null;
+    image: string | null;
     in_stock: boolean;
 }
 
@@ -24,6 +22,7 @@ interface Props {
 }
 
 function ProductCard({ product }: Readonly<{ product: Product }>) {
+    const { addItem, setCartOpen } = useCart();
     const discount =
         product.original_price === null
             ? null
@@ -33,22 +32,23 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
         <Link href={`/store/products/${product.slug}`} className="group block">
             <div className="overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md">
                 <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    <img
-                        src={product.image}
-                        alt={product.name}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {product.image ? (
+                        <img
+                            src={product.image}
+                            alt={product.name}
+                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                    ) : (
+                        <div className="flex h-full items-center justify-center text-gray-200">
+                            <Package className="h-16 w-16" />
+                        </div>
+                    )}
                     {!product.in_stock && (
                         <div className="absolute inset-0 flex items-center justify-center bg-black/40">
                             <span className="rounded-full bg-gray-800 px-3 py-1 text-xs font-semibold text-white">
                                 Agotado
                             </span>
                         </div>
-                    )}
-                    {product.badge && product.in_stock && (
-                        <span className="absolute left-2 top-2 rounded-full bg-brand-gold px-2 py-0.5 text-xs font-semibold text-white">
-                            {product.badge}
-                        </span>
                     )}
                     {discount !== null && (
                         <span className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
@@ -60,19 +60,6 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                     <p className="text-xs font-semibold uppercase tracking-wide text-brand-gold">{product.brand}</p>
                     <p className="text-xs text-gray-400">{product.category}</p>
                     <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
-                    <div className="mt-1.5 flex items-center gap-1">
-                        <div className="flex">
-                            {Array.from({ length: 5 }, (_, i) => (
-                                <Star
-                                    key={`star-${i}`}
-                                    className={`h-3 w-3 ${i < Math.floor(product.rating) ? 'fill-amber-400 text-amber-400' : 'text-gray-200'}`}
-                                />
-                            ))}
-                        </div>
-                        <span className="text-xs text-gray-500">
-                            {product.rating} ({product.reviews})
-                        </span>
-                    </div>
                     <div className="mt-3 flex items-center justify-between">
                         <div>
                             <span className="font-bold text-gray-900">${product.price.toFixed(2)}</span>
@@ -84,9 +71,15 @@ function ProductCard({ product }: Readonly<{ product: Product }>) {
                         </div>
                         <Button
                             size="sm"
-                            className="h-8 bg-brand-gold text-xs text-white hover:bg-brand-gold-dark"
+                            className="h-8 gap-1.5 bg-brand-gold text-xs text-white hover:bg-brand-gold-dark"
                             disabled={!product.in_stock}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image });
+                                setCartOpen(true);
+                            }}
                         >
+                            <ShoppingCart className="h-3 w-3" />
                             {product.in_stock ? 'Agregar' : 'Agotado'}
                         </Button>
                     </div>
@@ -117,7 +110,7 @@ export default function StoreProducts({ products, categories, currentCategory }:
             <Head title="Productos — KBeauty Glow SV" />
 
             {/* Page header */}
-            <div className="py-10" style={{ background: 'linear-gradient(to right, #FFF5F0, #F8EEE8)' }}>
+            <div className="py-10" style={{ background: 'linear-gradient(to right, #F8F6FF, #EDE9FB)' }}>
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <nav className="mb-3 flex items-center gap-2 text-xs text-gray-400">
                         <Link href="/store" className="hover:text-brand-gold">

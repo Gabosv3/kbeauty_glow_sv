@@ -60,14 +60,14 @@
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
 
-    /* KBeauty Glow SV — Brand Colors */
-    --color-brand-rose: #E6B8B1;
-    --color-brand-gold: #D19A8A;
-    --color-brand-gold-dark: #C08070;
-    --color-brand-cream: #FFFDF8;
-    --color-brand-cream-alt: #F9F9F9;
-    --color-brand-wood: #DCC6A9;
-    --color-brand-text: #4D4D4D;
+    /* KBeauty Glow SV — Brand Colors (lavanda) */
+    --color-brand-rose: #D5CEFB;
+    --color-brand-gold: #9B8EC4;
+    --color-brand-gold-dark: #7B6BAE;
+    --color-brand-cream: #F8F6FF;
+    --color-brand-cream-alt: #F0EDFF;
+    --color-brand-wood: #C5BEED;
+    --color-brand-text: #3D3656;
 }
 
 :root {
