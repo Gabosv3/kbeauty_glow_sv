@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
 use App\Http\Controllers\Admin\BrandController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
@@ -31,7 +32,7 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
     });
 
     Route::middleware(EnsureAdminAuth::class)->group(function () {
-        Route::inertia('dashboard', 'dashboard')->name('dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         // Usuarios
         Route::get('users', [UserController::class, 'index'])->name('users.index');
