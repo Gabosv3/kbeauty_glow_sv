@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\Product;
 use App\Models\Purchase;
 use App\Models\Sale;
 use Inertia\Inertia;
@@ -29,12 +30,23 @@ class DashboardController extends AdminController
             ->where('status', 'completed')
             ->count();
 
+        $totalStock = Product::where('team_id', $currentTeam->id)
+            ->where('active', true)
+            ->sum('stock');
+
+        $productsCount = Product::where('team_id', $currentTeam->id)
+            ->where('active', true)
+            ->count();
+
         return Inertia::render('dashboard', [
             'stats' => [
                 'totalPurchases' => (float) $totalPurchases,
                 'totalSales'     => (float) $totalSales,
+                'balance'        => (float) $totalSales - (float) $totalPurchases,
                 'purchasesCount' => $purchasesCount,
                 'salesCount'     => $salesCount,
+                'totalStock'     => (int) $totalStock,
+                'productsCount'  => $productsCount,
             ],
         ]);
     }
