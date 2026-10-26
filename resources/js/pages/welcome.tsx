@@ -2,7 +2,7 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import { dashboard, login } from '@/routes/admin';
 
 export default function Welcome() {
-    const { auth, currentTeam } = usePage().props;
+    const { auth } = usePage().props;
     const dashboardUrl = dashboard.url();
 
     return (

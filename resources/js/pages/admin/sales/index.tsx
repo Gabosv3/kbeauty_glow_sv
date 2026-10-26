@@ -28,11 +28,12 @@ type SaleForm = {
 };
 
 const statusColors: Record<string, string> = {
+    pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
     completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     refunded: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
 };
-const statusLabels: Record<string, string> = { completed: 'Completada', cancelled: 'Cancelada', refunded: 'Reembolsada' };
+const statusLabels: Record<string, string> = { pending: 'Pendiente', completed: 'Completada', cancelled: 'Cancelada', refunded: 'Reembolsada' };
 const paymentLabels: Record<string, string> = { cash: 'Efectivo', card: 'Tarjeta', transfer: 'Transferencia' };
 
 export default function SalesIndex({ sales, products }: Props) {
@@ -55,15 +56,21 @@ export default function SalesIndex({ sales, products }: Props) {
     function updateItem(i: number, field: keyof SaleItemForm, value: string) {
         const items = [...form.data.items];
         items[i] = { ...items[i], [field]: value };
+
         if (field === 'product_id') {
             const product = products.find(p => p.id.toString() === value);
-            if (product) items[i].unit_price = product.sale_price;
+
+            if (product) {
+items[i].unit_price = product.sale_price;
+}
         }
+
         form.setData('items', items);
     }
 
     const subtotal = form.data.items.reduce((sum, item) => {
         const line = (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0) - (parseFloat(item.discount) || 0);
+
         return sum + line;
     }, 0);
     const globalDiscount = parseFloat(form.data.discount) || 0;
@@ -74,12 +81,17 @@ export default function SalesIndex({ sales, products }: Props) {
         e.preventDefault();
         form.post(admin.sales.store, {
             preserveScroll: true,
-            onSuccess: () => { form.reset(); setOpenCreate(false); },
+            onSuccess: () => {
+ form.reset(); setOpenCreate(false); 
+},
         });
     }
 
     function cancelSale(sale: Sale) {
-        if (!confirm('¿Cancelar esta venta? Se restaurará el stock.')) return;
+        if (!confirm('¿Cancelar esta venta? Se restaurará el stock.')) {
+return;
+}
+
         router.post(admin.sales.cancel(sale.id), {}, { preserveScroll: true });
     }
 
@@ -111,7 +123,10 @@ export default function SalesIndex({ sales, products }: Props) {
                         <tbody className="divide-y">
                             {sales.map((s) => (
                                 <tr key={s.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-mono text-xs">{s.reference}</td>
+                                    <td className="px-4 py-3 font-mono text-xs">
+                                        {s.reference}
+                                        {s.channel === 'web' && <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-primary">WEB</span>}
+                                    </td>
                                     <td className="px-4 py-3 text-muted-foreground">
                                         <div>{new Date(s.created_at).toLocaleDateString('es')}</div>
                                         <div className="text-xs">{new Date(s.created_at).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</div>
@@ -132,7 +147,12 @@ export default function SalesIndex({ sales, products }: Props) {
                                                     <Eye className="size-4" />
                                                 </Link>
                                             </Button>
-                                            {s.status === 'completed' && (
+                                            {s.status === 'pending' && (
+                                                <Button size="sm" variant="ghost" onClick={() => router.post(admin.sales.complete(s.id), {}, { preserveScroll: true })}>
+                                                    Confirmar
+                                                </Button>
+                                            )}
+                                            {(s.status === 'completed' || s.status === 'pending') && (
                                                 <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelSale(s)}>
                                                     Cancelar
                                                 </Button>
@@ -208,6 +228,7 @@ export default function SalesIndex({ sales, products }: Props) {
                                         {form.data.items.map((item, i) => {
                                             const line = (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_price) || 0) - (parseFloat(item.discount) || 0);
                                             const selectedProduct = products.find(p => p.id.toString() === item.product_id);
+
                                             return (
                                                 <tr key={i}>
                                                     <td className="px-3 py-2">

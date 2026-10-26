@@ -36,14 +36,12 @@ type Props = {
     breadcrumbs?: BreadcrumbItem[];
 };
 
-const rightNavItems: NavItem[] = [];
-
 const activeItemStyles =
     'text-neutral-900 dark:bg-neutral-800 dark:text-neutral-100';
 
 export function AppHeader({ breadcrumbs = [] }: Props) {
     const page = usePage();
-    const { auth, currentTeam } = page.props;
+    const { auth } = page.props;
     const getInitials = useInitials();
     const { isCurrentUrl, whenCurrentUrl } = useCurrentUrl();
     const dashboardUrl = dashboard.url();

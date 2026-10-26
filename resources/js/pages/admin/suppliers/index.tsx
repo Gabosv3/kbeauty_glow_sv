@@ -44,13 +44,19 @@ export default function SuppliersIndex({ suppliers }: Props) {
         e.preventDefault();
         createForm.post(admin.suppliers.store, {
             preserveScroll: true,
-            onSuccess: () => { createForm.reset(); setOpenCreate(false); },
+            onSuccess: () => {
+ createForm.reset(); setOpenCreate(false); 
+},
         });
     }
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editTarget) return;
+
+        if (!editTarget) {
+return;
+}
+
         editForm.put(admin.suppliers.update(editTarget.id), {
             preserveScroll: true,
             onSuccess: () => setEditTarget(null),
@@ -58,7 +64,10 @@ export default function SuppliersIndex({ suppliers }: Props) {
     }
 
     function deleteSupplier(s: Supplier) {
-        if (!confirm(`¿Eliminar el proveedor "${s.name}"?`)) return;
+        if (!confirm(`¿Eliminar el proveedor "${s.name}"?`)) {
+return;
+}
+
         router.delete(admin.suppliers.destroy(s.id), { preserveScroll: true });
     }
 

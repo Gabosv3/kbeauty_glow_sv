@@ -1,5 +1,5 @@
-import { Link, usePage } from '@inertiajs/react';
-import { Award, LayoutGrid, Package, ShoppingBag, ShoppingCart, Tag, Truck, Users } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { Award, LayoutGrid, Package, Percent, ShoppingBag, ShoppingCart, Tag, Ticket, Truck, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppearanceToggleTab from '@/components/appearance-tabs';
 import { NavAdmin } from '@/components/nav-admin';
@@ -65,6 +65,16 @@ export function AppSidebar() {
             title: 'Ventas',
             href: admin.sales.index,
             icon: ShoppingBag,
+        },
+        {
+            title: 'Cupones',
+            href: admin.coupons.index,
+            icon: Ticket,
+        },
+        {
+            title: 'Descuentos',
+            href: admin.discounts.index,
+            icon: Percent,
         },
     ];
 

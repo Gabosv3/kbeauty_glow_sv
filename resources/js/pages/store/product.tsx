@@ -1,6 +1,7 @@
 ﻿import { Head, Link } from '@inertiajs/react';
 import { MessageCircle, Heart, ChevronRight, Package, Truck, Shield, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
+import { ProductCard } from '@/components/store/product-card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/cart-context';
@@ -29,6 +30,7 @@ function buildWhatsAppUrl(productName: string, price: number, qty: number): stri
     const total = (price * qty).toFixed(2);
     const msg =
         `¡Hola! Me interesa pedir lo siguiente:\n\n*${productName}*\nPrecio unitario: $${price.toFixed(2)}\nCantidad: ${qty}\nTotal: $${total}\n\n¿Está disponible? 😊`;
+
     return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
 }
 
@@ -86,7 +88,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                 <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
                     {/* Imagen */}
                     <div>
-                        <div className="relative overflow-hidden rounded-2xl border bg-gray-50">
+                        <div className="relative overflow-hidden rounded-3xl border border-brand-rose/60 bg-brand-cream">
                             {product.image ? (
                                 <img
                                     src={product.image}
@@ -120,7 +122,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                             )}
                         </div>
 
-                        <h1 className="mt-2 text-2xl font-bold text-gray-900 sm:text-3xl">{product.name}</h1>
+                        <h1 className="font-display mt-2 text-3xl font-semibold text-brand-text sm:text-4xl">{product.name}</h1>
 
                         {/* Precio */}
                         <div className="mt-4 flex items-baseline gap-3">
@@ -191,7 +193,10 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                                 >
                                     <ShoppingCart className="mr-2 h-4 w-4" />
                                     {(() => {
-                                        if (added) return '¡Agregado! ✓';
+                                        if (added) {
+return '¡Agregado! ✓';
+}
+
                                         return product.in_stock ? 'Agregar al carrito' : 'Agotado';
                                     })()}
                                 </Button>
@@ -250,39 +255,10 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                 {/* Productos Relacionados */}
                 {relatedProducts.length > 0 && (
                     <div className="mt-12">
-                        <h2 className="mb-6 text-xl font-bold text-gray-900">Productos Relacionados</h2>
+                        <h2 className="font-display mb-6 text-2xl font-semibold text-brand-text">Productos Relacionados</h2>
                         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
                             {relatedProducts.map((related) => (
-                                <Link
-                                    key={related.id}
-                                    href={`/store/products/${related.slug}`}
-                                    className="group block"
-                                >
-                                    <div className="overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md">
-                                        <div className="aspect-square overflow-hidden bg-gray-50">
-                                            {related.image ? (
-                                                <img
-                                                    src={related.image}
-                                                    alt={related.name}
-                                                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                                                />
-                                            ) : (
-                                                <div className="flex h-full items-center justify-center text-gray-200">
-                                                    <Package className="h-10 w-10" />
-                                                </div>
-                                            )}
-                                        </div>
-                                        <div className="p-3">
-                                            <p className="text-xs font-semibold text-brand-gold">{related.brand}</p>
-                                            <h3 className="mt-0.5 line-clamp-2 text-xs font-semibold text-gray-900">
-                                                {related.name}
-                                            </h3>
-                                            <p className="mt-1.5 text-sm font-bold text-gray-900">
-                                                ${related.price.toFixed(2)}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ProductCard key={related.id} product={related} />
                             ))}
                         </div>
                     </div>

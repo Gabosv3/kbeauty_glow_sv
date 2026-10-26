@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import { ArrowLeft, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,12 @@ type Props = {
 };
 
 const statusColors: Record<string, string> = {
+    pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900 dark:text-amber-200',
     completed: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
     cancelled: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
     refunded: 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200',
 };
-const statusLabels: Record<string, string> = { completed: 'Completada', cancelled: 'Cancelada', refunded: 'Reembolsada' };
+const statusLabels: Record<string, string> = { pending: 'Pendiente', completed: 'Completada', cancelled: 'Cancelada', refunded: 'Reembolsada' };
 const paymentLabels: Record<string, string> = { cash: 'Efectivo', card: 'Tarjeta', transfer: 'Transferencia' };
 
 export default function SaleShow({ sale }: Props) {
@@ -38,6 +39,11 @@ export default function SaleShow({ sale }: Props) {
                     <span className={`ml-auto rounded-full px-3 py-1 text-sm font-medium ${statusColors[sale.status]}`}>
                         {statusLabels[sale.status]}
                     </span>
+                    {sale.status === 'pending' && (
+                        <Button size="sm" onClick={() => router.post(admin.sales.complete(sale.id), {}, { preserveScroll: true })}>
+                            Confirmar pedido
+                        </Button>
+                    )}
                     <Button variant="outline" size="sm" onClick={() => window.print()}>
                         <Printer className="mr-2 size-4" /> Imprimir factura
                     </Button>
@@ -65,6 +71,26 @@ export default function SaleShow({ sale }: Props) {
                                 <span className="text-muted-foreground">Vendedor</span>
                                 <span>{sale.user?.name ?? '—'}</span>
                             </div>
+                            {sale.customer_phone && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Teléfono</span>
+                                    <span>{sale.customer_phone}</span>
+                                </div>
+                            )}
+                            {sale.delivery_address && (
+                                <div className="flex justify-between gap-6">
+                                    <span className="text-muted-foreground">Entrega</span>
+                                    <span className="text-right">
+                                        {sale.delivery_address}, {sale.delivery_municipality}, {sale.delivery_department}
+                                    </span>
+                                </div>
+                            )}
+                            {sale.coupon_code && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Cupón</span>
+                                    <span className="font-mono">{sale.coupon_code}</span>
+                                </div>
+                            )}
                             {sale.notes && (
                                 <div className="flex justify-between">
                                     <span className="text-muted-foreground">Notas</span>
@@ -85,6 +111,12 @@ export default function SaleShow({ sale }: Props) {
                                 <span className="text-muted-foreground">Descuento</span>
                                 <span>-${sale.discount}</span>
                             </div>
+                            {Number(sale.shipping_cost ?? 0) > 0 && (
+                                <div className="flex justify-between">
+                                    <span className="text-muted-foreground">Envío</span>
+                                    <span>${sale.shipping_cost}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between">
                                 <span className="text-muted-foreground">Impuesto</span>
                                 <span>${sale.tax}</span>

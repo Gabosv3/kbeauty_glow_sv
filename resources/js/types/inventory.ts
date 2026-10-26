@@ -107,9 +107,16 @@ export type SaleItem = {
 export type Sale = {
     id: number;
     reference: string;
-    status: 'completed' | 'cancelled' | 'refunded';
+    status: 'pending' | 'completed' | 'cancelled' | 'refunded';
+    channel?: 'admin' | 'web';
     customer_name: string | null;
     customer_email: string | null;
+    customer_phone?: string | null;
+    delivery_department?: string | null;
+    delivery_municipality?: string | null;
+    delivery_address?: string | null;
+    shipping_cost?: string;
+    coupon_code?: string | null;
     payment_method: 'cash' | 'card' | 'transfer';
     subtotal: string;
     discount: string;

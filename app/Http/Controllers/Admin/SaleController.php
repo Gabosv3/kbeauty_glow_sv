@@ -121,7 +121,7 @@ class SaleController extends AdminController
     public function cancel(Sale $sale): RedirectResponse
     {
         abort_unless($sale->team_id === $this->currentTeam()->id, 403);
-        abort_if($sale->status !== 'completed', 422, 'Solo se pueden cancelar ventas completadas.');
+        abort_if(! in_array($sale->status, ['completed', 'pending'], true), 422, 'Solo se pueden cancelar ventas completadas o pendientes.');
 
         DB::transaction(function () use ($sale) {
             $sale->load('items');
@@ -132,5 +132,15 @@ class SaleController extends AdminController
         });
 
         return back()->with('success', 'Venta cancelada. Stock restaurado.');
+    }
+
+    public function complete(Sale $sale): RedirectResponse
+    {
+        abort_unless($sale->team_id === $this->currentTeam()->id, 403);
+        abort_if($sale->status !== 'pending', 422, 'Solo se pueden confirmar pedidos pendientes.');
+
+        $sale->update(['status' => 'completed']);
+
+        return back()->with('success', 'Pedido confirmado como venta completada.');
     }
 }

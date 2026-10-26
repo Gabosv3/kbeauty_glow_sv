@@ -12,7 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 #[Fillable([
     'team_id', 'user_id', 'reference', 'status', 'customer_name',
     'customer_email', 'subtotal', 'discount', 'tax', 'total',
-    'payment_method', 'notes',
+    'payment_method', 'notes', 'channel', 'customer_phone', 'delivery_department',
+    'delivery_municipality', 'delivery_address', 'shipping_cost', 'coupon_code',
 ])]
 class Sale extends Model
 {
@@ -24,6 +25,7 @@ class Sale extends Model
             'subtotal' => 'decimal:2',
             'discount' => 'decimal:2',
             'tax' => 'decimal:2',
+            'shipping_cost' => 'decimal:2',
             'total' => 'decimal:2',
         ];
     }

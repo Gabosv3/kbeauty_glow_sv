@@ -28,10 +28,11 @@ export default function AdminLogin({ errors }: Props) {
     return (
         <>
             <Head title="Acceso Administrativo" />
-            <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
-                <div className="w-full max-w-sm space-y-6 rounded-xl border bg-background p-8 shadow-sm">
+            <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-cream via-brand-cream-alt to-brand-rose/60 px-4">
+                <div className="w-full max-w-sm space-y-6 rounded-3xl border border-brand-rose/60 bg-white p-8 shadow-xl shadow-brand-gold/15">
                     <div className="space-y-1 text-center">
-                        <h1 className="text-2xl font-bold tracking-tight">Área Administrativa</h1>
+                        <img src="/img/logo.png" alt="KBeauty Glow SV" className="mx-auto mb-2 h-14 w-14 object-contain" />
+                        <h1 className="font-display text-2xl font-semibold tracking-tight">Área Administrativa</h1>
                         <p className="text-sm text-muted-foreground">Inicia sesión para continuar</p>
                     </div>
 

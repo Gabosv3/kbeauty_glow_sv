@@ -11,6 +11,9 @@ use App\Http\Controllers\Admin\PurchaseController;
 use App\Http\Controllers\Admin\SaleController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\CouponController;
+use App\Http\Controllers\Admin\DiscountController;
+use App\Http\Controllers\Store\CheckoutController;
 use App\Http\Controllers\Store\StoreController;
 use App\Http\Middleware\EnsureAdminAuth;
 use Illuminate\Support\Facades\Route;
@@ -22,6 +25,12 @@ Route::prefix('store')->name('store.')->group(function () {
     Route::get('/', [StoreController::class, 'index'])->name('index');
     Route::get('/products', [StoreController::class, 'products'])->name('products');
     Route::get('/products/{slug}', [StoreController::class, 'product'])->name('product');
+    Route::post('/cart/quote', [CheckoutController::class, 'quote'])->middleware('throttle:60,1')->name('cart.quote');
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'store'])->middleware('throttle:10,1')->name('checkout.store');
+    Route::get('/pedido/{reference}', [CheckoutController::class, 'order'])->name('order');
+    Route::get('/nosotros', [StoreController::class, 'about'])->name('about');
+    Route::get('/contacto', [StoreController::class, 'contact'])->name('contact');
 });
 
 // Admin: Login
@@ -65,6 +74,16 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
         Route::post('products/{product}/images', [ProductImageController::class, 'store'])->name('products.images.store');
         Route::delete('products/{product}/images/{image}', [ProductImageController::class, 'destroy'])->name('products.images.destroy');
 
+        // Marketing
+        Route::get('coupons', [CouponController::class, 'index'])->name('coupons.index');
+        Route::post('coupons', [CouponController::class, 'store'])->name('coupons.store');
+        Route::put('coupons/{coupon}', [CouponController::class, 'update'])->name('coupons.update');
+        Route::delete('coupons/{coupon}', [CouponController::class, 'destroy'])->name('coupons.destroy');
+        Route::get('discounts', [DiscountController::class, 'index'])->name('discounts.index');
+        Route::post('discounts', [DiscountController::class, 'store'])->name('discounts.store');
+        Route::put('discounts/{discount}', [DiscountController::class, 'update'])->name('discounts.update');
+        Route::delete('discounts/{discount}', [DiscountController::class, 'destroy'])->name('discounts.destroy');
+
         // Compras
         Route::get('purchases', [PurchaseController::class, 'index'])->name('purchases.index');
         Route::post('purchases', [PurchaseController::class, 'store'])->name('purchases.store');
@@ -82,6 +101,7 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
         Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
         Route::post('sales', [SaleController::class, 'store'])->name('sales.store');
         Route::get('sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
+        Route::post('sales/{sale}/complete', [SaleController::class, 'complete'])->name('sales.complete');
         Route::post('sales/{sale}/cancel', [SaleController::class, 'cancel'])->name('sales.cancel');
 
         // Logout

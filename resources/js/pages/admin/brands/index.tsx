@@ -43,13 +43,19 @@ export default function BrandsIndex({ brands }: Props) {
         e.preventDefault();
         createForm.post(admin.brands.store, {
             preserveScroll: true,
-            onSuccess: () => { createForm.reset(); setOpenCreate(false); },
+            onSuccess: () => {
+ createForm.reset(); setOpenCreate(false); 
+},
         });
     }
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editTarget) return;
+
+        if (!editTarget) {
+return;
+}
+
         editForm.put(admin.brands.update(editTarget.id), {
             preserveScroll: true,
             onSuccess: () => setEditTarget(null),
@@ -57,7 +63,10 @@ export default function BrandsIndex({ brands }: Props) {
     }
 
     function deleteBrand(brand: Brand) {
-        if (!confirm(`¿Eliminar la marca "${brand.name}"?`)) return;
+        if (!confirm(`¿Eliminar la marca "${brand.name}"?`)) {
+return;
+}
+
         router.delete(admin.brands.destroy(brand.id), { preserveScroll: true });
     }
 
@@ -122,7 +131,13 @@ export default function BrandsIndex({ brands }: Props) {
             </div>
 
             {/* Dialog: Nueva marca */}
-            <Dialog open={openCreate} onOpenChange={(v) => { if (!v) { createForm.reset(); } setOpenCreate(v); }}>
+            <Dialog open={openCreate} onOpenChange={(v) => {
+ if (!v) {
+ createForm.reset(); 
+}
+
+ setOpenCreate(v); 
+}}>
                 <DialogContent className="max-w-md">
                     <DialogHeader>
                         <DialogTitle>Nueva marca</DialogTitle>
@@ -159,7 +174,9 @@ export default function BrandsIndex({ brands }: Props) {
                             <Label htmlFor="create-active">Activa</Label>
                         </div>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={() => { createForm.reset(); setOpenCreate(false); }}>
+                            <Button type="button" variant="outline" onClick={() => {
+ createForm.reset(); setOpenCreate(false); 
+}}>
                                 Cancelar
                             </Button>
                             <Button type="submit" disabled={createForm.processing}>

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,13 +36,19 @@ export default function CategoriesIndex({ categories }: Props) {
         e.preventDefault();
         createForm.post(admin.categories.store, {
             preserveScroll: true,
-            onSuccess: () => { createForm.reset(); setOpenCreate(false); },
+            onSuccess: () => {
+ createForm.reset(); setOpenCreate(false); 
+},
         });
     }
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editTarget) return;
+
+        if (!editTarget) {
+return;
+}
+
         editForm.put(admin.categories.update(editTarget.id), {
             preserveScroll: true,
             onSuccess: () => setEditTarget(null),
@@ -51,7 +56,10 @@ export default function CategoriesIndex({ categories }: Props) {
     }
 
     function deleteCategory(cat: Category) {
-        if (!confirm(`¿Eliminar la categoría "${cat.name}"?`)) return;
+        if (!confirm(`¿Eliminar la categoría "${cat.name}"?`)) {
+return;
+}
+
         router.delete(admin.categories.destroy(cat.id), { preserveScroll: true });
     }
 

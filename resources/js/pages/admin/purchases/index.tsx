@@ -62,10 +62,15 @@ export default function PurchasesIndex({ purchases, suppliers, products }: Props
     function updateItem(i: number, field: keyof PurchaseItemForm, value: string) {
         const items = [...form.data.items];
         items[i] = { ...items[i], [field]: value };
+
         if (field === 'product_id') {
             const product = products.find(p => p.id.toString() === value);
-            if (product) items[i].unit_cost = product.cost_price;
+
+            if (product) {
+items[i].unit_cost = product.cost_price;
+}
         }
+
         form.setData('items', items);
     }
 
@@ -80,17 +85,25 @@ export default function PurchasesIndex({ purchases, suppliers, products }: Props
         e.preventDefault();
         form.post(admin.purchases.store, {
             preserveScroll: true,
-            onSuccess: () => { form.reset(); setOpenCreate(false); },
+            onSuccess: () => {
+ form.reset(); setOpenCreate(false); 
+},
         });
     }
 
     function orderPurchase(purchase: Purchase) {
-        if (!confirm('Marcar esta compra como enviada al proveedor?')) return;
+        if (!confirm('Marcar esta compra como enviada al proveedor?')) {
+return;
+}
+
         router.post(admin.purchases.order(purchase.id), {}, { preserveScroll: true });
     }
 
     function cancelOrder(purchase: Purchase) {
-        if (!confirm('Cancelar esta compra?')) return;
+        if (!confirm('Cancelar esta compra?')) {
+return;
+}
+
         router.post(admin.purchases.cancel(purchase.id), {}, { preserveScroll: true });
     }
 
@@ -222,6 +235,7 @@ export default function PurchasesIndex({ purchases, suppliers, products }: Props
                                     <tbody className="divide-y bg-background">
                                         {form.data.items.map((item, i) => {
                                             const lineTotal = (parseFloat(item.quantity) || 0) * (parseFloat(item.unit_cost) || 0);
+
                                             return (
                                                 <tr key={i} className="group">
                                                     <td className="px-3 py-2">
@@ -237,7 +251,11 @@ export default function PurchasesIndex({ purchases, suppliers, products }: Props
                                                                         placeholder="Buscar producto..."
                                                                         className="w-full rounded-md border border-input bg-background py-1.5 pl-7 pr-2 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                                                                         value={productSearch[i] ?? ''}
-                                                                        onChange={e => setProductSearch(s => { const n = [...s]; n[i] = e.target.value; return n; })}
+                                                                        onChange={e => setProductSearch(s => {
+ const n = [...s]; n[i] = e.target.value;
+
+ return n; 
+})}
                                                                         onKeyDown={e => e.stopPropagation()}
                                                                         onClick={e => e.stopPropagation()}
                                                                     />

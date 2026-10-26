@@ -103,8 +103,9 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
                 // Subir imágenes si hay pendientes — buscar el producto recién creado
                 if (pendingImages.length > 0) {
                     // El producto recién creado es el último en la lista actualizada
-                    const updatedProducts = (page.props as { products: Product[] }).products;
+                    const updatedProducts = (page.props as unknown as { products: Product[] }).products;
                     const newProduct = updatedProducts[updatedProducts.length - 1];
+
                     if (newProduct) {
                         const fd = new FormData();
                         pendingImages.forEach(f => fd.append('images[]', f));
@@ -114,6 +115,7 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
                         });
                     }
                 }
+
                 closeCreate();
             },
         });
@@ -121,7 +123,11 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editTarget) return;
+
+        if (!editTarget) {
+return;
+}
+
         editForm.put(admin.products.update(editTarget.id), {
             preserveScroll: true,
             onSuccess: () => setEditTarget(null),
@@ -129,7 +135,10 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
     }
 
     function deleteProduct(p: Product) {
-        if (!confirm(`¿Eliminar "${p.name}"?`)) return;
+        if (!confirm(`¿Eliminar "${p.name}"?`)) {
+return;
+}
+
         router.delete(admin.products.destroy(p.id), { preserveScroll: true });
     }
 
@@ -152,11 +161,15 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
                             type="text"
                             placeholder="Buscar por nombre o SKU..."
                             value={search}
-                            onChange={e => { setSearch(e.target.value); setPage(1); }}
+                            onChange={e => {
+ setSearch(e.target.value); setPage(1); 
+}}
                             className="h-9 rounded-md border border-input bg-background pl-9 pr-3 text-sm shadow-sm focus:outline-none focus:ring-1 focus:ring-ring w-[480px]"
                         />
                     </div>
-                    <Select value={filterCategory} onValueChange={v => { setFilterCategory(v); setPage(1); }}>
+                    <Select value={filterCategory} onValueChange={v => {
+ setFilterCategory(v); setPage(1); 
+}}>
                         <SelectTrigger className="w-48">
                             <SelectValue placeholder="Todas las categorías" />
                         </SelectTrigger>
@@ -167,7 +180,9 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
                             ))}
                         </SelectContent>
                     </Select>
-                    <Select value={filterBrand} onValueChange={v => { setFilterBrand(v); setPage(1); }}>
+                    <Select value={filterBrand} onValueChange={v => {
+ setFilterBrand(v); setPage(1); 
+}}>
                         <SelectTrigger className="w-48">
                             <SelectValue placeholder="Todas las marcas" />
                         </SelectTrigger>
@@ -179,7 +194,9 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
                         </SelectContent>
                     </Select>
                     {(filterCategory || filterBrand || search) && (
-                        <Button variant="ghost" size="sm" onClick={() => { setFilterCategory(''); setFilterBrand(''); setSearch(''); setPage(1); }}>
+                        <Button variant="ghost" size="sm" onClick={() => {
+ setFilterCategory(''); setFilterBrand(''); setSearch(''); setPage(1); 
+}}>
                             Limpiar filtros
                         </Button>
                     )}
@@ -187,14 +204,24 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
 
                 {(() => {
                     const filtered = products.filter(p => {
-                        if (filterCategory && filterCategory !== 'all' && p.category_id?.toString() !== filterCategory) return false;
-                        if (filterBrand && filterBrand !== 'all' && p.brand_id?.toString() !== filterBrand) return false;
+                        if (filterCategory && filterCategory !== 'all' && p.category_id?.toString() !== filterCategory) {
+return false;
+}
+
+                        if (filterBrand && filterBrand !== 'all' && p.brand_id?.toString() !== filterBrand) {
+return false;
+}
+
                         if (search) {
                             const q = search.toLowerCase();
                             const matchName = p.name.toLowerCase().includes(q);
                             const matchSku = p.sku?.toLowerCase().includes(q) ?? false;
-                            if (!matchName && !matchSku) return false;
+
+                            if (!matchName && !matchSku) {
+return false;
+}
                         }
+
                         return true;
                     });
 
@@ -410,8 +437,16 @@ function ImageDropZone({ onFiles, disabled }: { onFiles: (f: FileList) => void; 
     return (
         <div
             onClick={() => !disabled && fileRef.current?.click()}
-            onDrop={(e) => { e.preventDefault(); setDragging(false); if (!disabled) onFiles(e.dataTransfer.files); }}
-            onDragOver={(e) => { e.preventDefault(); setDragging(true); }}
+            onDrop={(e) => {
+ e.preventDefault(); setDragging(false);
+
+ if (!disabled) {
+onFiles(e.dataTransfer.files);
+} 
+}}
+            onDragOver={(e) => {
+ e.preventDefault(); setDragging(true); 
+}}
             onDragLeave={() => setDragging(false)}
             className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed p-6 transition-all ${
                 dragging ? 'border-primary bg-primary/5 scale-[1.01]' : 'border-border hover:border-primary hover:bg-muted/40'
@@ -440,7 +475,10 @@ function ImageManager({ product }: { product: Product }) {
     const [uploading, setUploading] = useState(false);
 
     function upload(files: FileList) {
-        if (files.length === 0) return;
+        if (files.length === 0) {
+return;
+}
+
         setUploading(true);
         const formData = new FormData();
         Array.from(files).forEach(f => formData.append('images[]', f));
@@ -452,7 +490,10 @@ function ImageManager({ product }: { product: Product }) {
     }
 
     function deleteImage(img: ProductImage) {
-        if (!confirm('¿Eliminar esta imagen?')) return;
+        if (!confirm('¿Eliminar esta imagen?')) {
+return;
+}
+
         router.delete(admin.products.imagesDestroy(product.id, img.id), {
             preserveScroll: true,
             preserveState: true,

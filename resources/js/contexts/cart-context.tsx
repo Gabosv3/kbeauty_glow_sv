@@ -1,4 +1,5 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState  } from 'react';
+import type {ReactNode} from 'react';
 
 export interface CartItem {
     id: number;
@@ -28,6 +29,7 @@ const CART_KEY = 'kbeauty_cart';
 function readCart(): CartItem[] {
     try {
         const raw = localStorage.getItem(CART_KEY);
+
         return raw ? (JSON.parse(raw) as CartItem[]) : [];
     } catch {
         return [];
@@ -39,11 +41,14 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     const [cartOpen, setCartOpen] = useState(false);
 
     useEffect(() => {
+        // Se lee tras el montaje para evitar desajustes de hidratación (SSR).
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setItems(readCart());
     }, []);
 
     const persist = (next: CartItem[]) => {
         localStorage.setItem(CART_KEY, JSON.stringify(next));
+
         return next;
     };
 
@@ -53,6 +58,7 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
             const next = existing
                 ? prev.map((i) => (i.id === product.id ? { ...i, quantity: i.quantity + qty } : i))
                 : [...prev, { ...product, quantity: qty }];
+
             return persist(next);
         });
     }, []);
@@ -62,7 +68,10 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
     }, []);
 
     const updateQty = useCallback((id: number, qty: number) => {
-        if (qty < 1) return;
+        if (qty < 1) {
+return;
+}
+
         setItems((prev) => persist(prev.map((i) => (i.id === id ? { ...i, quantity: qty } : i))));
     }, []);
 
@@ -88,6 +97,10 @@ export function CartProvider({ children }: Readonly<{ children: ReactNode }>) {
 
 export function useCart() {
     const ctx = useContext(CartContext);
-    if (!ctx) throw new Error('useCart debe usarse dentro de CartProvider');
+
+    if (!ctx) {
+throw new Error('useCart debe usarse dentro de CartProvider');
+}
+
     return ctx;
 }

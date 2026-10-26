@@ -1,247 +1,246 @@
-import { Head, Link } from '@inertiajs/react';
-import { ShoppingBag, ChevronRight, Truck, Shield, RefreshCcw, Headphones, Package, ShoppingCart } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/cart-context';
-
-interface Product {
-    id: number;
-    name: string;
-    slug: string;
-    brand: string;
-    category: string;
-    price: number;
-    original_price: number | null;
-    image: string | null;
-    in_stock: boolean;
-}
+import { Head, Link, router } from '@inertiajs/react';
+import { ArrowRight, BadgeCheck, Search, ShieldCheck, Sparkles, Truck } from 'lucide-react';
+import { useState } from 'react';
+import { ProductCard } from '@/components/store/product-card';
+import type { StoreProduct } from '@/components/store/product-card';
+import { Reveal } from '@/components/store/reveal';
+import { categoryEmoji, STORE } from '@/lib/store-config';
 
 interface Props {
-    featuredProducts: Product[];
+    featuredProducts: StoreProduct[];
+    categories: { name: string; count: number }[];
+    brands: string[];
 }
 
-const categories = [
-    { name: 'Serums', emoji: '💧', description: 'Activos concentrados', href: '/store/products?category=serums', bg: 'bg-purple-50 hover:bg-purple-100' },
-    { name: 'Protector solar', emoji: '☀️', description: 'Protección UV K-Beauty', href: '/store/products?category=Protector+solar', bg: 'bg-amber-50 hover:bg-amber-100' },
-    { name: 'Parches', emoji: '🩹', description: 'Parches para el rostro', href: '/store/products?category=Parches', bg: 'bg-blue-50 hover:bg-blue-100' },
-    { name: 'Mascarillas nocturnas', emoji: '🌙', description: 'Tratamiento mientras duermes', href: '/store/products?category=mascarillas+nocturnas', bg: 'bg-indigo-50 hover:bg-indigo-100' },
-    { name: 'Tónico Exfoliante', emoji: '✨', description: 'Renueva y suaviza la piel', href: '/store/products?category=T%C3%B3nico+Exfoliante', bg: 'bg-pink-50 hover:bg-pink-100' },
-    { name: 'Limpiador en aceite', emoji: '🫧', description: 'Doble limpieza', href: '/store/products?category=Limpiador+en+aceite', bg: 'bg-green-50 hover:bg-green-100' },
-    { name: 'Limpiador en espuma', emoji: '🌿', description: 'Limpieza profunda suave', href: '/store/products?category=Limpiador+en+espuma', bg: 'bg-teal-50 hover:bg-teal-100' },
-    { name: 'Vitaminas', emoji: '💊', description: 'Suplementos y nutrición', href: '/store/products?category=Vitaminas', bg: 'bg-rose-50 hover:bg-rose-100' },
+const perks = [
+    { icon: Truck, title: 'Envío gratis', desc: `En compras desde $${STORE.freeShippingFrom}` },
+    { icon: BadgeCheck, title: '100% auténtico', desc: 'Directo de Corea, sin imitaciones' },
+    { icon: ShieldCheck, title: 'Compra segura', desc: 'Confirmas tu pedido por WhatsApp' },
+    { icon: Sparkles, title: 'Asesoría real', desc: 'Te ayudamos a armar tu rutina' },
 ];
 
-const features = [
-    { icon: Truck, title: 'Envío Gratis', desc: 'En pedidos mayores a $50', color: 'text-brand-gold' },
-    { icon: Shield, title: 'Productos Auténticos', desc: '100% K-Beauty originales', color: 'text-brand-wood' },
-    { icon: RefreshCcw, title: 'Devoluciones Fáciles', desc: '30 días para devolver', color: 'text-brand-gold' },
-    { icon: Headphones, title: 'Soporte 24/7', desc: 'Siempre disponibles', color: 'text-brand-wood' },
-];
+function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
+    const [query, setQuery] = useState('');
+    const shots = products.filter((p) => p.image).slice(0, 3);
 
-function ProductCard({ product }: Readonly<{ product: Product }>) {
-    const { addItem, setCartOpen } = useCart();
-    const discount =
-        product.original_price === null
-            ? null
-            : Math.round(((product.original_price - product.price) / product.original_price) * 100);
-
-    function handleAdd(e: React.MouseEvent) {
+    function submit(e: React.FormEvent) {
         e.preventDefault();
-        addItem({ id: product.id, name: product.name, slug: product.slug, price: product.price, image: product.image });
-        setCartOpen(true);
+        router.get('/store/products', query.trim() ? { q: query.trim() } : {});
     }
 
     return (
-        <Link href={`/store/products/${product.slug}`} className="group block">
-            <div className="overflow-hidden rounded-xl border bg-white shadow-sm transition-all hover:shadow-md">
-                <div className="relative aspect-square overflow-hidden bg-gray-50">
-                    {product.image ? (
-                        <img
-                            src={product.image}
-                            alt={product.name}
-                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                    ) : (
-                        <div className="flex h-full items-center justify-center text-gray-200">
-                            <Package className="h-16 w-16" />
-                        </div>
-                    )}
-                    {discount !== null && (
-                        <span className="absolute right-2 top-2 rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
-                            -{discount}%
+        <section className="relative isolate overflow-hidden">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_50%_at_80%_10%,#D5CEFB_0%,transparent_70%),radial-gradient(50%_40%_at_5%_90%,#E8E4F9_0%,transparent_70%)]" />
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,transparent_70%,var(--color-brand-cream))]" />
+
+            <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:gap-8 lg:px-8 lg:pb-28 lg:pt-24">
+                <div>
+                    <span className="inline-flex items-center gap-2 rounded-full border border-brand-rose bg-white/70 px-3.5 py-1.5 text-xs font-medium text-brand-gold-dark backdrop-blur">
+                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-gold" />
+                        K-Beauty original · El Salvador
+                    </span>
+                    <h1 className="font-display mt-6 text-5xl leading-[1.02] font-semibold tracking-tight text-brand-text sm:text-6xl lg:text-7xl">
+                        Tu piel,
+                        <br />
+                        <span className="bg-gradient-to-r from-brand-gold to-brand-gold-dark bg-clip-text text-transparent italic">
+                            en modo glow.
                         </span>
-                    )}
+                    </h1>
+                    <p className="mt-6 max-w-lg text-lg leading-relaxed text-brand-text/70">
+                        Skincare coreano seleccionado a mano. Serums, protectores y parches que sí funcionan, listos para tu rutina.
+                    </p>
+
+                    <form onSubmit={submit} role="search" className="mt-8 flex max-w-lg items-center gap-2 rounded-full border border-brand-rose bg-white p-1.5 shadow-lg shadow-brand-gold/10">
+                        <Search className="ml-3 h-4 w-4 shrink-0 text-brand-gold" />
+                        <input
+                            value={query}
+                            onChange={(e) => setQuery(e.target.value)}
+                            aria-label="Buscar productos"
+                            placeholder="Busca un serum, marca o categoría…"
+                            className="min-w-0 flex-1 bg-transparent px-1 text-sm text-brand-text placeholder:text-brand-text/40 focus:outline-none"
+                        />
+                        <button className="rounded-full bg-brand-text px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-gold-dark">
+                            Buscar
+                        </button>
+                    </form>
+
+                    <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-brand-text/70">
+                        <Link href="/store/products" className="group inline-flex items-center gap-2 font-semibold text-brand-gold-dark">
+                            Ver catálogo completo
+                            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </Link>
+                        <span className="hidden h-4 w-px bg-brand-rose sm:block" />
+                        <span>🚚 Envío gratis +${STORE.freeShippingFrom}</span>
+                    </div>
                 </div>
-                <div className="p-4">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-brand-gold">{product.brand}</p>
-                    <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-gray-900">{product.name}</h3>
-                    <div className="mt-3 flex items-center justify-between">
-                        <div className="flex items-baseline gap-1.5">
-                            <span className="font-bold text-gray-900">${product.price.toFixed(2)}</span>
-                            {product.original_price !== null && (
-                                <span className="text-xs text-gray-400 line-through">
-                                    ${product.original_price.toFixed(2)}
-                                </span>
-                            )}
+
+                <div className="relative mx-auto grid w-full max-w-md grid-cols-6 grid-rows-6 gap-3 sm:max-w-lg" style={{ aspectRatio: '1 / 1.05' }}>
+                    {shots[0] && (
+                        <div className="col-span-4 row-span-4 overflow-hidden rounded-[2rem] border-4 border-white bg-brand-cream shadow-2xl shadow-brand-gold/25">
+                            <img src={shots[0].image ?? undefined} alt={shots[0].name} className="h-full w-full object-cover" />
                         </div>
-                        {product.in_stock ? (
-                            <button
-                                onClick={handleAdd}
-                                className="flex h-8 items-center gap-1.5 rounded-md bg-brand-gold px-3 text-xs font-medium text-white hover:bg-brand-gold-dark"
-                            >
-                                <ShoppingCart className="h-3.5 w-3.5" />
-                                Agregar
-                            </button>
-                        ) : (
-                            <span className="rounded-md bg-gray-100 px-3 py-1.5 text-xs text-gray-400">Agotado</span>
-                        )}
+                    )}
+                    {shots[1] && (
+                        <div className="col-span-2 col-start-5 row-span-3 overflow-hidden rounded-[1.5rem] border-4 border-white bg-brand-cream shadow-xl shadow-brand-gold/20">
+                            <img src={shots[1].image ?? undefined} alt={shots[1].name} className="h-full w-full object-cover" />
+                        </div>
+                    )}
+                    {shots[2] && (
+                        <div className="col-span-3 col-start-3 row-span-2 row-start-5 overflow-hidden rounded-[1.5rem] border-4 border-white bg-brand-cream shadow-xl shadow-brand-gold/20">
+                            <img src={shots[2].image ?? undefined} alt={shots[2].name} className="h-full w-full object-cover" />
+                        </div>
+                    )}
+                    <div className="absolute -left-2 bottom-8 flex items-center gap-2 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-xl backdrop-blur sm:-left-6">
+                        <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-cream-alt text-lg">✨</span>
+                        <div className="leading-tight">
+                            <p className="text-sm font-semibold text-brand-text">100% original</p>
+                            <p className="text-xs text-brand-text/60">Importado de Corea</p>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Link>
+        </section>
     );
 }
 
-export default function StoreIndex({ featuredProducts }: Readonly<Props>) {
+function BrandMarquee({ brands }: Readonly<{ brands: string[] }>) {
+    if (brands.length === 0) {
+        return null;
+    }
+
+    const row = [...brands, ...brands, ...brands, ...brands];
+
+    return (
+        <div className="overflow-hidden border-y border-brand-rose/60 bg-white py-5 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]" aria-label="Marcas disponibles">
+            <div className="flex w-max animate-[marquee_40s_linear_infinite] gap-12 whitespace-nowrap motion-reduce:animate-none">
+                {row.map((b, i) => (
+                    <Link
+                        key={`${b}-${i}`}
+                        href={`/store/products?brand[]=${encodeURIComponent(b)}`}
+                        className="font-display text-xl font-medium text-brand-text/40 transition-colors hover:text-brand-gold"
+                    >
+                        {b}
+                    </Link>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default function StoreIndex({ featuredProducts, categories, brands }: Readonly<Props>) {
+    const tiles = categories.slice(0, 6);
+
     return (
         <>
             <Head title="KBeauty Glow SV — Tu tienda de K-Beauty en El Salvador" />
 
-            {/* Hero */}
-            <section className="relative overflow-hidden py-16 lg:py-24" style={{ background: 'linear-gradient(135deg, #F8F6FF 0%, #F0EDFF 50%, #E8E4F9 100%)' }}>                <div className="pointer-events-none absolute inset-0">
-                    <div className="absolute -right-20 -top-20 h-80 w-80 rounded-full opacity-40 blur-3xl" style={{ background: '#D5CEFB' }} />
-                    <div className="absolute -bottom-20 -left-20 h-80 w-80 rounded-full opacity-30 blur-3xl" style={{ background: '#C5BEED' }} />
-                </div>
-                <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="flex flex-col items-center text-center lg:flex-row lg:items-center lg:text-left lg:gap-12">
-                        <div className="max-w-xl lg:flex-1">
-                            <Badge className="mb-4 border-brand-rose bg-[#EEE9FB] text-[#6B5FAE] hover:bg-[#EEE9FB]">
-                                ✨ Nuevos productos disponibles
-                            </Badge>
-                            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-                                Descubre el secreto de la{' '}
-                                <span className="text-brand-gold">belleza coreana</span>
-                            </h1>
-                            <p className="mt-6 text-lg text-gray-600">
-                                Los mejores productos K-Beauty, 100% auténticos. Desde Seúl hasta El Salvador, traemos la revolución del skincare directamente a ti.
-                            </p>
-                            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:items-start">
-                                <Button size="lg" className="bg-brand-gold px-8 text-white hover:bg-brand-gold-dark" asChild>
-                                    <Link href="/store/products">
-                                        <ShoppingBag className="mr-2 h-4 w-4" />
-                                        Ver Catálogo
-                                    </Link>
-                                </Button>
-                                <Button size="lg" variant="outline" className="border-brand-rose bg-white text-brand-text hover:bg-brand-cream" asChild>
-                                    <Link href="/store/products?category=Serums">
-                                        Explorar Serums
-                                        <ChevronRight className="ml-1 h-4 w-4" />
-                                    </Link>
-                                </Button>
-                            </div>
-                            <p className="mt-4 text-sm text-gray-400">
-                                🚚 Envío gratis +$50 &nbsp;·&nbsp; 🔒 Pago seguro &nbsp;·&nbsp; ✅ Productos originales
-                            </p>
-                        </div>
+            <Hero products={featuredProducts} />
+            <BrandMarquee brands={brands} />
 
-                        <div className="mt-12 lg:mt-0 lg:flex-1 lg:flex lg:justify-end">
-                            <div className="grid max-w-xs grid-cols-2 gap-3">
-                                {featuredProducts.slice(0, 4).map((p) => (
-                                    <div key={p.id} className="overflow-hidden rounded-2xl shadow-md">
-                                        <img src={p.image} alt={p.name} className="h-32 w-full object-cover" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Categories */}
-            <section className="py-16">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-10 text-center">
-                        <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Compra por Categoría</h2>
-                        <p className="mt-2 text-gray-500">Encuentra exactamente lo que tu piel necesita</p>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                        {categories.map((cat) => (
-                            <Link
-                                key={cat.name}
-                                href={cat.href}
-                                className={`flex flex-col items-center rounded-xl p-6 text-center transition-colors ${cat.bg}`}
-                            >
-                                <span className="text-4xl">{cat.emoji}</span>
-                                <span className="mt-3 text-sm font-semibold text-gray-800">{cat.name}</span>
-                                <span className="mt-1 text-xs text-gray-500">{cat.description}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Featured Products */}
-            <section className="bg-brand-cream-alt py-16">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="mb-10 flex items-end justify-between">
-                        <div>
-                            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">Productos Destacados</h2>
-                            <p className="mt-2 text-gray-500">Los favoritos de nuestra comunidad</p>
-                        </div>
-                        <Link
-                            href="/store/products"
-                            className="flex items-center text-sm font-medium text-brand-gold hover:text-brand-gold-dark"
-                        >
-                            Ver todos <ChevronRight className="h-4 w-4" />
-                        </Link>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-                        {featuredProducts.map((product) => (
-                            <ProductCard key={product.id} product={product} />
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Features */}
-            <section className="py-16">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-2 gap-6 lg:grid-cols-4">
-                        {features.map(({ icon: Icon, title, desc, color }) => (
-                            <div
-                                key={title}
-                                className="flex flex-col items-center rounded-xl border bg-white p-6 text-center shadow-sm"
-                            >
-                                <div className="mb-3 rounded-full bg-gray-50 p-3">
-                                    <Icon className={`h-6 w-6 ${color}`} />
+            {tiles.length > 0 && (
+                <section className="py-20">
+                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                        <Reveal>
+                            <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+                                <div>
+                                    <p className="text-xs font-semibold tracking-[0.2em] text-brand-gold uppercase">Explora</p>
+                                    <h2 className="font-display mt-2 text-4xl font-semibold text-brand-text sm:text-5xl">Compra por categoría</h2>
                                 </div>
-                                <h3 className="font-semibold text-gray-900">{title}</h3>
-                                <p className="mt-1 text-xs text-gray-500">{desc}</p>
+                                <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-dark">
+                                    Ver todo <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                                </Link>
                             </div>
+                        </Reveal>
+
+                        <div className="grid auto-rows-[10rem] grid-cols-2 gap-4 md:grid-cols-4">
+                            {tiles.map((cat, i) => (
+                                <Reveal key={cat.name} delay={i * 60} className={i === 0 ? 'col-span-2 row-span-2' : i === 3 ? 'md:col-span-2' : ''}>
+                                    <Link
+                                        href={`/store/products?category=${encodeURIComponent(cat.name)}`}
+                                        className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-brand-rose/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-gold/20 ${
+                                            i === 0
+                                                ? 'bg-gradient-to-br from-brand-gold to-brand-gold-dark text-white'
+                                                : 'bg-white text-brand-text hover:border-brand-gold/50'
+                                        }`}
+                                    >
+                                        <span className={`text-4xl transition-transform duration-500 group-hover:scale-110 group-hover:-rotate-6 ${i === 0 ? 'text-6xl' : ''}`}>
+                                            {categoryEmoji(cat.name)}
+                                        </span>
+                                        <div>
+                                            <h3 className={`font-display font-semibold ${i === 0 ? 'text-3xl' : 'text-lg'}`}>{cat.name}</h3>
+                                            <p className={`mt-0.5 text-sm ${i === 0 ? 'text-white/80' : 'text-brand-text/60'}`}>
+                                                {cat.count} {cat.count === 1 ? 'producto' : 'productos'}
+                                            </p>
+                                        </div>
+                                        <ArrowRight className={`absolute top-6 right-6 h-5 w-5 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 ${i === 0 ? 'text-white' : 'text-brand-gold'}`} />
+                                    </Link>
+                                </Reveal>
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            <section className="bg-brand-cream-alt/70 py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <Reveal>
+                        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+                            <div>
+                                <p className="text-xs font-semibold tracking-[0.2em] text-brand-gold uppercase">Selección</p>
+                                <h2 className="font-display mt-2 text-4xl font-semibold text-brand-text sm:text-5xl">Favoritos del momento</h2>
+                            </div>
+                            <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-dark">
+                                Ver catálogo <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                            </Link>
+                        </div>
+                    </Reveal>
+                    <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+                        {featuredProducts.map((product, i) => (
+                            <Reveal key={product.id} delay={(i % 4) * 70} className="h-full">
+                                <ProductCard product={product} />
+                            </Reveal>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Newsletter CTA */}
-            <section className="py-16" style={{ background: 'linear-gradient(to right, #9B8EC4, #7B6BAE)' }}>
-                <div className="mx-auto max-w-xl px-4 text-center">
-                    <h2 className="text-2xl font-bold text-white sm:text-3xl">¡Únete a la comunidad Glow!</h2>
-                    <p className="mt-2" style={{ color: '#E8E4F9' }}>
-                        Recibe tips de K-Beauty, novedades y ofertas exclusivas.
-                    </p>
-                    <div className="mt-6 flex gap-2">
-                        <input
-                            type="email"
-                            placeholder="tu@correo.com"
-                            className="flex-1 rounded-lg border-0 px-4 py-3 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
-                        />
-                        <Button className="bg-white px-6 font-semibold hover:bg-[#F0EDFF]" style={{ color: '#9B8EC4' }}>
-                            Suscribir
-                        </Button>
+            <section className="py-20">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                        {perks.map(({ icon: Icon, title, desc }, i) => (
+                            <Reveal key={title} delay={i * 70}>
+                                <div className="h-full rounded-3xl border border-brand-rose/60 bg-white p-6">
+                                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-cream-alt text-brand-gold-dark">
+                                        <Icon className="h-5 w-5" />
+                                    </span>
+                                    <h3 className="font-display mt-4 text-lg font-semibold text-brand-text">{title}</h3>
+                                    <p className="mt-1 text-sm text-brand-text/60">{desc}</p>
+                                </div>
+                            </Reveal>
+                        ))}
                     </div>
-                    <p className="mt-3 text-xs" style={{ color: '#E8E4F9' }}>✅ Sin spam. Puedes cancelar cuando quieras.</p>
                 </div>
+            </section>
+
+            <section className="px-4 pb-20 sm:px-6 lg:px-8">
+                <Reveal>
+                    <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-gold-dark via-brand-gold to-brand-wood px-6 py-16 text-center sm:px-12">
+                        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-text/20 blur-3xl" />
+                        <h2 className="font-display relative text-4xl font-semibold text-white sm:text-5xl">¿No sabes por dónde empezar?</h2>
+                        <p className="relative mx-auto mt-4 max-w-xl text-white/85">
+                            Cuéntanos tu tipo de piel y te armamos una rutina a tu medida. Sin costo, por WhatsApp.
+                        </p>
+                        <a
+                            href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent('¡Hola! Me gustaría que me ayuden a armar mi rutina de skincare 🌸')}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-gold-dark shadow-xl transition-transform hover:scale-105"
+                        >
+                            Hablar con una asesora <ArrowRight className="h-4 w-4" />
+                        </a>
+                    </div>
+                </Reveal>
             </section>
         </>
     );

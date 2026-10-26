@@ -2,8 +2,7 @@ import { Head } from '@inertiajs/react';
 import { Users } from 'lucide-react';
 import Heading from '@/components/heading';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { admin } from '@/lib/admin-routes';
 
 type Member = {

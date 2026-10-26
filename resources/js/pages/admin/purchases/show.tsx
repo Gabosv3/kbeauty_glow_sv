@@ -1,8 +1,8 @@
 ﻿import { Head, router, useForm } from '@inertiajs/react';
-import Swal from 'sweetalert2';
 import { Link } from '@inertiajs/react';
 import { ArrowLeft, Package, Pencil, Plus, Trash2, Truck } from 'lucide-react';
 import { useState } from 'react';
+import Swal from 'sweetalert2';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -73,7 +73,11 @@ export default function PurchaseShow({ purchase }: Props) {
 
     function submitEdit(e: React.FormEvent) {
         e.preventDefault();
-        if (!editingShipment) return;
+
+        if (!editingShipment) {
+return;
+}
+
         editForm.put(admin.shipments.update(editingShipment.id), {
             preserveScroll: true,
             onSuccess: () => setEditingShipment(null),
@@ -92,10 +96,12 @@ export default function PurchaseShow({ purchase }: Props) {
     function setItemQuantity(id: number, quantity: number, max: number) {
         const qty = Math.min(Math.max(0, quantity), max);
         const current = shipmentForm.data.items;
+
         if (qty === 0) {
             shipmentForm.setData('items', current.filter(i => i.id !== id));
         } else {
             const exists = current.find(i => i.id === id);
+
             if (exists) {
                 shipmentForm.setData('items', current.map(i => i.id === id ? { id, quantity: qty } : i));
             } else {
@@ -128,7 +134,11 @@ export default function PurchaseShow({ purchase }: Props) {
             confirmButtonColor: '#16a34a',
             cancelButtonColor: '#6b7280',
         });
-        if (!result.isConfirmed) return;
+
+        if (!result.isConfirmed) {
+return;
+}
+
         router.post(admin.shipments.receive(shipment.id), {}, { preserveScroll: true });
     }
 
@@ -143,7 +153,11 @@ export default function PurchaseShow({ purchase }: Props) {
             confirmButtonColor: '#dc2626',
             cancelButtonColor: '#6b7280',
         });
-        if (!result.isConfirmed) return;
+
+        if (!result.isConfirmed) {
+return;
+}
+
         router.post(admin.shipments.notReceived(shipment.id), {}, { preserveScroll: true });
     }
 
@@ -161,7 +175,11 @@ export default function PurchaseShow({ purchase }: Props) {
             confirmButtonColor: '#dc2626',
             cancelButtonColor: '#6b7280',
         });
-        if (!result.isConfirmed) return;
+
+        if (!result.isConfirmed) {
+return;
+}
+
         router.delete(admin.shipments.destroy(shipment.id), { preserveScroll: true });
     }
 
@@ -253,6 +271,7 @@ export default function PurchaseShow({ purchase }: Props) {
                             <tbody className="divide-y">
                                 {purchase.items?.map((item) => {
                                     const shipment = purchase.shipments?.find(s => s.id === item.shipment_id);
+
                                     return (
                                         <tr key={item.id}>
                                             <td className="px-4 py-3">{item.product?.name ?? `#${item.product_id}`}</td>
@@ -432,6 +451,7 @@ export default function PurchaseShow({ purchase }: Props) {
                                 {unassignedItems.map(item => {
                                     const assigned = shipmentForm.data.items.find(i => i.id === item.id)?.quantity ?? 0;
                                     const subtotal = ((parseFloat(item.unit_cost) || 0) * assigned).toFixed(2);
+
                                     return (
                                         <div key={item.id} className={`flex items-center gap-3 px-3 py-2.5 transition-colors ${assigned > 0 ? 'bg-muted/30' : ''}`}>
                                             <span className="flex-1 text-sm">{item.product?.name ?? `#${item.product_id}`}</span>
@@ -462,7 +482,11 @@ export default function PurchaseShow({ purchase }: Props) {
             </Dialog>
 
             {/* Modal: Editar paquete */}
-            <Dialog open={!!editingShipment} onOpenChange={open => { if (!open) setEditingShipment(null); }}>
+            <Dialog open={!!editingShipment} onOpenChange={open => {
+ if (!open) {
+setEditingShipment(null);
+} 
+}}>
                 <DialogContent className="max-w-sm">
                     <DialogHeader><DialogTitle>Editar Paquete</DialogTitle></DialogHeader>
                     <form onSubmit={submitEdit} className="space-y-4">
