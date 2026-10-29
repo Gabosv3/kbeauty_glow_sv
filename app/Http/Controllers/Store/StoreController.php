@@ -58,10 +58,16 @@ class StoreController extends Controller
             ->all();
 
         $categories = Category::withCount(['products' => fn ($q) => $q->where('active', true)])
+            ->with(['products' => fn ($q) => $q->where('active', true)->with('images')->orderByDesc('stock')])
             ->having('products_count', '>', 0)
             ->orderByDesc('products_count')
             ->get(['id', 'name'])
-            ->map(fn ($c) => ['name' => $c->name, 'count' => $c->products_count])
+            ->map(fn ($c) => [
+                'name' => $c->name,
+                'count' => $c->products_count,
+                // Foto de portada: la del primer producto disponible de la categoría que tenga imagen.
+                'image' => $c->products->map(fn ($p) => $this->pricing->imageFor($p))->filter()->first(),
+            ])
             ->all();
 
         $brands = Brand::whereHas('products', fn ($q) => $q->where('active', true))

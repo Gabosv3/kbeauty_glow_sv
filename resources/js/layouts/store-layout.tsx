@@ -1,5 +1,5 @@
 ﻿import { Link, router, usePage } from '@inertiajs/react';
-import { ShoppingCart, Search, User, Menu, X, Mail, MessageCircle, Trash2, Plus, Minus, Package, Instagram, Facebook, Music2 } from 'lucide-react';
+import { ShoppingCart, Search, User, LayoutDashboard, Menu, X, Mail, MessageCircle, Trash2, Plus, Minus, Package, Instagram, Facebook, Music2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -225,8 +225,9 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
     const [mobileOpen, setMobileOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const { totalItems, setCartOpen } = useCart();
-    const { url, props } = usePage<{ customer: { name: string } | null }>();
+    const { url, props } = usePage<{ customer: { name: string } | null; auth: { user: { id: number } | null } }>();
     const customer = props.customer;
+    const panelUser = props.auth.user;
     const [query, setQuery] = useState('');
 
     const isActive = (href: string) => (href === '/' ? url === '/' : !href.includes('?') && url.split('?')[0] === href);
@@ -300,6 +301,14 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
                                     </span>
                                 )}
                             </Button>
+                            {panelUser && (
+                                <Link
+                                    href="/administrativo/dashboard"
+                                    className="mx-1 hidden items-center gap-1.5 rounded-full border border-brand-rose px-3 py-1.5 text-xs font-semibold text-brand-text transition-colors hover:bg-brand-cream-alt sm:inline-flex"
+                                >
+                                    <LayoutDashboard className="h-3.5 w-3.5" /> Panel
+                                </Link>
+                            )}
                             <Button variant="ghost" size="icon" asChild>
                                 <Link
                                     href={customer ? '/store/cuenta' : '/store/cuenta/login'}

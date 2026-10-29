@@ -1,9 +1,7 @@
 import { Link } from '@inertiajs/react';
-import { Award, FileText, LayoutGrid, Package, Percent, ShoppingBag, Settings, ShoppingCart, Star, Tag, Ticket, Truck, UserRound, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppearanceToggleTab from '@/components/appearance-tabs';
-import { NavAdmin } from '@/components/nav-admin';
-import { NavMain } from '@/components/nav-main';
+import { NavGroups } from '@/components/nav-groups';
 import { NavUser } from '@/components/nav-user';
 import { TeamSwitcher } from '@/components/team-switcher';
 import {
@@ -15,96 +13,17 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { admin } from '@/lib/admin-routes';
+import { adminNavGroups } from '@/lib/admin-nav';
 import { dashboard } from '@/routes/admin';
-import type { NavItem } from '@/types';
 
 export function AppSidebar() {
-    const dashboardUrl = dashboard.url();
-
-    const mainNavItems: NavItem[] = [
-        {
-            title: 'Dashboard',
-            href: dashboardUrl,
-            icon: LayoutGrid,
-        },
-    ];
-
-    const adminNavItems: NavItem[] = [
-        {
-            title: 'Usuarios',
-            href: admin.users.index,
-            icon: Users,
-        },
-        {
-            title: 'Categorías',
-            href: admin.categories.index,
-            icon: Tag,
-        },
-        {
-            title: 'Marcas',
-            href: admin.brands.index,
-            icon: Award,
-        },
-        {
-            title: 'Productos',
-            href: admin.products.index,
-            icon: Package,
-        },
-        {
-            title: 'Proveedores',
-            href: admin.suppliers.index,
-            icon: Truck,
-        },
-        {
-            title: 'Compras',
-            href: admin.purchases.index,
-            icon: ShoppingCart,
-        },
-        {
-            title: 'Ventas',
-            href: admin.sales.index,
-            icon: ShoppingBag,
-        },
-        {
-            title: 'Cotizaciones',
-            href: admin.quotes.index,
-            icon: FileText,
-        },
-        {
-            title: 'Clientes',
-            href: admin.customers.index,
-            icon: UserRound,
-        },
-        {
-            title: 'Cupones',
-            href: admin.coupons.index,
-            icon: Ticket,
-        },
-        {
-            title: 'Descuentos',
-            href: admin.discounts.index,
-            icon: Percent,
-        },
-        {
-            title: 'Destacados',
-            href: admin.featured.index,
-            icon: Star,
-        },
-        {
-            title: 'Ajustes',
-            href: admin.settings.edit,
-            icon: Settings,
-        },
-    ];
-
     return (
         <Sidebar collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild>
-                            <Link href={dashboardUrl} prefetch>
+                            <Link href={dashboard.url()} prefetch>
                                 <AppLogo />
                             </Link>
                         </SidebarMenuButton>
@@ -118,8 +37,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
-                {<NavAdmin items={adminNavItems} />}
+                <NavGroups groups={adminNavGroups} />
             </SidebarContent>
 
             <SidebarFooter>

@@ -1,0 +1,1 @@
+import{m as e,u as t}from"./jsx-runtime--AJk9GtA.js";var n=e(t(),1);function r(e){(0,n.useEffect)(()=>{let t=new URLSearchParams(window.location.search);if(t.get(`new`)!==`1`)return;t.delete(`new`);let n=t.toString();window.history.replaceState(window.history.state,``,window.location.pathname+(n?`?${n}`:``)),e()},[])}export{r as t};

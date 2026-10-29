@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useOpenOnNew } from '@/hooks/use-open-on-new';
 import { admin } from '@/lib/admin-routes';
 
 type Coupon = {
@@ -66,6 +67,7 @@ function statusOf(c: Coupon): { label: string; active: boolean } {
 
 export default function CouponsIndex({ coupons }: Readonly<{ coupons: Coupon[] }>) {
     const [open, setOpen] = useState(false);
+    useOpenOnNew(() => setOpen(true));
     const [editing, setEditing] = useState<Coupon | null>(null);
     const form = useForm<CouponForm>(empty);
 

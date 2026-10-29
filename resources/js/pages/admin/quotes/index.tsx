@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useOpenOnNew } from '@/hooks/use-open-on-new';
 import { admin } from '@/lib/admin-routes';
 
 type Row = Quote & { items_count: number };
@@ -20,6 +21,7 @@ const emptyLine: Line = { product_id: '', quantity: '1', unit_price: '' };
 
 export default function QuotesIndex({ quotes, products }: Readonly<{ quotes: Row[]; products: Product[] }>) {
     const [open, setOpen] = useState(false);
+    useOpenOnNew(() => setOpen(true));
     const form = useForm({
         customer_name: '',
         customer_phone: '',

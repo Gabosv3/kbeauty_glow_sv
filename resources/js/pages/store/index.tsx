@@ -1,14 +1,20 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowRight, BadgeCheck, Search, ShieldCheck, Sparkles, Truck } from 'lucide-react';
-import { useState } from 'react';
+import { ArrowRight, ArrowUpRight, BadgeCheck, MessageCircle, Search, ShieldCheck, Sparkles, Truck } from 'lucide-react';
+import { createElement, useState } from 'react';
 import { ProductCard } from '@/components/store/product-card';
 import type { StoreProduct } from '@/components/store/product-card';
 import { Reveal } from '@/components/store/reveal';
 import { categoryIcon, useStore } from '@/lib/store-config';
 
+interface Category {
+    name: string;
+    count: number;
+    image: string | null;
+}
+
 interface Props {
     featuredProducts: StoreProduct[];
-    categories: { name: string; count: number }[];
+    categories: Category[];
     brands: string[];
 }
 
@@ -18,6 +24,21 @@ const perks = (freeShippingFrom: number) => [
     { icon: ShieldCheck, title: 'Compra segura', desc: 'Confirmas tu pedido por WhatsApp' },
     { icon: Sparkles, title: 'Asesoría real', desc: 'Te ayudamos a armar tu rutina' },
 ];
+
+const routine = [
+    { step: '01', title: 'Limpia', desc: 'Doble limpieza para retirar maquillaje, protector e impurezas sin resecar tu piel.' },
+    { step: '02', title: 'Trata', desc: 'Tónicos, serums y mascarillas con activos pensados para lo que tu piel necesita hoy.' },
+    { step: '03', title: 'Protege', desc: 'Protector solar y humectación para mantener el glow durante todo el día.' },
+];
+
+function Eyebrow({ children, light = false }: Readonly<{ children: React.ReactNode; light?: boolean }>) {
+    return (
+        <p className={`flex items-center gap-3 text-[11px] font-semibold tracking-[0.28em] uppercase ${light ? 'text-white/70' : 'text-brand-mauve'}`}>
+            <span className={`h-px w-8 ${light ? 'bg-white/40' : 'bg-brand-mauve/50'}`} />
+            {children}
+        </p>
+    );
+}
 
 function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
     const STORE = useStore();
@@ -30,29 +51,27 @@ function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
     }
 
     return (
-        <section className="relative isolate overflow-hidden">
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(55%_50%_at_82%_8%,#EBDDF3_0%,transparent_70%),radial-gradient(45%_40%_at_4%_92%,#F6E7EE_0%,transparent_70%),radial-gradient(40%_35%_at_50%_50%,#F3EFFC_0%,transparent_75%)]" />
-            <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_bottom,transparent_70%,var(--color-brand-cream))]" />
+        <section className="relative isolate overflow-hidden bg-brand-text text-white">
+            <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(60%_60%_at_85%_15%,rgba(168,82,122,0.55)_0%,transparent_65%),radial-gradient(55%_55%_at_5%_95%,rgba(155,142,196,0.45)_0%,transparent_65%),linear-gradient(135deg,#2E2748_0%,#3D3656_55%,#4A3A6B_100%)]" />
+            <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[34rem] w-[34rem] -translate-x-1/2 rounded-full border border-white/5" />
+            <div className="pointer-events-none absolute -top-24 left-1/2 -z-10 h-[26rem] w-[26rem] -translate-x-1/2 rounded-full border border-white/5" />
 
-            <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 pb-20 pt-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:gap-8 lg:px-8 lg:pb-28 lg:pt-24">
+            <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:gap-10 lg:px-8 lg:pb-28 lg:pt-24">
                 <div>
-                    <span className="inline-flex items-center gap-2 rounded-full border border-brand-rose bg-white/70 px-3.5 py-1.5 text-xs font-medium text-brand-gold-dark backdrop-blur">
-                        <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-gold" />
-                        K-Beauty original · El Salvador
-                    </span>
-                    <h1 className="font-display mt-6 text-5xl leading-[1.02] font-semibold tracking-tight text-brand-text sm:text-6xl lg:text-7xl">
+                    <Eyebrow light>K-Beauty original · El Salvador</Eyebrow>
+                    <h1 className="font-display mt-7 text-5xl leading-[1.02] font-medium tracking-tight sm:text-6xl lg:text-[5.25rem]">
                         Tu piel,
                         <br />
-                        <span className="bg-gradient-to-r from-brand-gold to-brand-gold-dark bg-clip-text text-transparent italic">
+                        <span className="bg-gradient-to-r from-[#F6D9E6] via-[#E9C9F0] to-[#CFC5F5] bg-clip-text text-transparent italic">
                             en modo glow.
                         </span>
                     </h1>
-                    <p className="mt-6 max-w-lg text-lg leading-relaxed text-brand-text/70">
+                    <p className="mt-7 max-w-lg text-lg leading-relaxed text-white/70">
                         Skincare coreano seleccionado a mano. Serums, protectores y parches que sí funcionan, listos para tu rutina.
                     </p>
 
-                    <form onSubmit={submit} role="search" className="mt-8 flex max-w-lg items-center gap-2 rounded-full border border-brand-rose bg-white p-1.5 shadow-lg shadow-brand-gold/10">
-                        <Search className="ml-3 h-4 w-4 shrink-0 text-brand-gold" />
+                    <form onSubmit={submit} role="search" className="mt-9 flex max-w-lg items-center gap-2 rounded-full bg-white p-1.5 shadow-2xl shadow-black/30">
+                        <Search className="ml-3 h-4 w-4 shrink-0 text-brand-mauve" />
                         <input
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
@@ -60,45 +79,42 @@ function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
                             placeholder="Busca un serum, marca o categoría…"
                             className="min-w-0 flex-1 bg-transparent px-1 text-sm text-brand-text placeholder:text-brand-text/40 focus:outline-none"
                         />
-                        <button className="rounded-full bg-brand-text px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-gold-dark">
+                        <button className="rounded-full bg-brand-text px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-mauve">
                             Buscar
                         </button>
                     </form>
 
-                    <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-brand-text/70">
-                        <Link href="/store/products" className="group inline-flex items-center gap-2 font-semibold text-brand-gold-dark">
+                    <div className="mt-8 flex flex-wrap items-center gap-x-8 gap-y-4">
+                        <Link href="/store/products" className="group inline-flex items-center gap-2 border-b border-white/40 pb-1 text-sm font-semibold tracking-wide transition-colors hover:border-white">
                             Ver catálogo completo
                             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                         </Link>
-                        <span className="hidden h-4 w-px bg-brand-rose sm:block" />
-                        <span className="inline-flex items-center gap-2">
-                            <Truck className="h-4 w-4 text-brand-gold" /> Envío gratis desde ${STORE.freeShippingFrom}
+                        <span className="inline-flex items-center gap-2 text-sm text-white/70">
+                            <Truck className="h-4 w-4 text-[#F6D9E6]" /> Envío gratis desde ${STORE.freeShippingFrom}
                         </span>
                     </div>
                 </div>
 
-                <div className="relative mx-auto grid w-full max-w-md grid-cols-6 grid-rows-6 gap-3 sm:max-w-lg" style={{ aspectRatio: '1 / 1.05' }}>
-                    {shots[0] && (
-                        <div className="col-span-4 row-span-4 overflow-hidden rounded-[2rem] border-4 border-white bg-brand-cream shadow-2xl shadow-brand-gold/25">
-                            <img src={shots[0].image ?? undefined} alt={shots[0].name} className="h-full w-full object-cover" />
-                        </div>
+                <div className="relative mx-auto grid w-full max-w-md grid-cols-[1fr_1fr_0.85fr] items-end gap-3 sm:max-w-lg sm:gap-4">
+                    {[
+                        { shot: shots[0], className: 'h-80 sm:h-[26rem]' },
+                        { shot: shots[1], className: 'h-64 sm:h-80 translate-y-6' },
+                        { shot: shots[2], className: 'h-52 sm:h-64' },
+                    ].map(({ shot, className }, i) =>
+                        shot ? (
+                            <div key={shot.id} className={`overflow-hidden rounded-t-full border border-white/20 bg-white/5 p-1.5 shadow-2xl shadow-black/30 ${className}`} style={{ animationDelay: `${i * 120}ms` }}>
+                                <img src={shot.image ?? undefined} alt={shot.name} className="h-full w-full rounded-t-full object-cover" />
+                            </div>
+                        ) : (
+                            <div key={i} className={`rounded-t-full border border-white/15 bg-white/5 ${className}`} />
+                        ),
                     )}
-                    {shots[1] && (
-                        <div className="col-span-2 col-start-5 row-span-3 overflow-hidden rounded-[1.5rem] border-4 border-white bg-brand-cream shadow-xl shadow-brand-gold/20">
-                            <img src={shots[1].image ?? undefined} alt={shots[1].name} className="h-full w-full object-cover" />
-                        </div>
-                    )}
-                    {shots[2] && (
-                        <div className="col-span-3 col-start-3 row-span-2 row-start-5 overflow-hidden rounded-[1.5rem] border-4 border-white bg-brand-cream shadow-xl shadow-brand-gold/20">
-                            <img src={shots[2].image ?? undefined} alt={shots[2].name} className="h-full w-full object-cover" />
-                        </div>
-                    )}
-                    <div className="absolute -left-2 bottom-8 flex items-center gap-2 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 shadow-xl backdrop-blur sm:-left-6">
-                        <span className="grid h-9 w-9 place-items-center rounded-full bg-brand-blush text-brand-mauve">
+                    <div className="absolute -left-3 bottom-10 flex items-center gap-3 rounded-2xl border border-white/30 bg-white/90 px-4 py-3 text-brand-text shadow-2xl backdrop-blur sm:-left-8">
+                        <span className="grid h-10 w-10 place-items-center rounded-full bg-brand-blush text-brand-mauve">
                             <BadgeCheck className="h-5 w-5" strokeWidth={1.5} />
                         </span>
                         <div className="leading-tight">
-                            <p className="text-sm font-semibold text-brand-text">100% original</p>
+                            <p className="text-sm font-semibold">100% original</p>
                             <p className="text-xs text-brand-text/60">Importado de Corea</p>
                         </div>
                     </div>
@@ -116,25 +132,64 @@ function BrandMarquee({ brands }: Readonly<{ brands: string[] }>) {
     const row = [...brands, ...brands, ...brands, ...brands];
 
     return (
-        <div className="overflow-hidden border-y border-brand-rose/60 bg-white py-5 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]" aria-label="Marcas disponibles">
-            <div className="flex w-max animate-[marquee_40s_linear_infinite] gap-12 whitespace-nowrap motion-reduce:animate-none">
+        <div className="overflow-hidden border-b border-brand-rose/60 bg-white py-6 [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]" aria-label="Marcas disponibles">
+            <div className="flex w-max animate-[marquee_40s_linear_infinite] items-center gap-12 whitespace-nowrap motion-reduce:animate-none">
                 {row.map((b, i) => (
-                    <Link
-                        key={`${b}-${i}`}
-                        href={`/store/products?brand[]=${encodeURIComponent(b)}`}
-                        className="font-display text-xl font-medium text-brand-text/40 transition-colors hover:text-brand-gold"
-                    >
-                        {b}
-                    </Link>
+                    <span key={`${b}-${i}`} className="flex items-center gap-12">
+                        <Link
+                            href={`/store/products?brand[]=${encodeURIComponent(b)}`}
+                            className="font-display text-xl font-medium text-brand-text/40 italic transition-colors hover:text-brand-mauve"
+                        >
+                            {b}
+                        </Link>
+                        <span className="h-1 w-1 rounded-full bg-brand-mauve/40" />
+                    </span>
                 ))}
             </div>
         </div>
     );
 }
 
+function CategoryCard({ category, index }: Readonly<{ category: Category; index: number }>) {
+
+    return (
+        <Link
+            href={`/store/products?category=${encodeURIComponent(category.name)}`}
+            className={`group relative block aspect-[3/4] overflow-hidden rounded-[2rem] bg-brand-text ${index % 2 === 1 ? 'lg:translate-y-10' : ''}`}
+        >
+            {category.image ? (
+                <img
+                    src={category.image}
+                    alt=""
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+            ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-brand-text via-[#5B4B86] to-brand-mauve" />
+            )}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2E2748] via-[#2E2748]/35 to-transparent" />
+
+            <span className="absolute top-5 left-5 grid h-10 w-10 place-items-center rounded-full bg-white/15 text-white backdrop-blur">
+                {createElement(categoryIcon(category.name), { className: "h-5 w-5", strokeWidth: 1.5 })}
+            </span>
+            <span className="absolute top-5 right-5 grid h-10 w-10 place-items-center rounded-full bg-white text-brand-text opacity-0 transition-all duration-300 group-hover:opacity-100">
+                <ArrowUpRight className="h-4 w-4" />
+            </span>
+
+            <div className="absolute inset-x-0 bottom-0 p-6">
+                <p className="text-[11px] font-semibold tracking-[0.24em] text-white/70 uppercase">
+                    {category.count} {category.count === 1 ? 'producto' : 'productos'}
+                </p>
+                <h3 className="font-display mt-1.5 text-2xl leading-tight font-medium text-white sm:text-[1.7rem]">{category.name}</h3>
+                <span className="mt-3 block h-px w-10 bg-white/50 transition-all duration-500 group-hover:w-20" />
+            </div>
+        </Link>
+    );
+}
+
 export default function StoreIndex({ featuredProducts, categories, brands }: Readonly<Props>) {
     const STORE = useStore();
-    const tiles = categories.slice(0, 6);
+    const tiles = categories.slice(0, 8);
 
     return (
         <>
@@ -144,64 +199,44 @@ export default function StoreIndex({ featuredProducts, categories, brands }: Rea
             <BrandMarquee brands={brands} />
 
             {tiles.length > 0 && (
-                <section className="py-20">
+                <section className="py-24">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <Reveal>
-                            <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+                            <div className="mb-14 flex flex-wrap items-end justify-between gap-4">
                                 <div>
-                                    <p className="text-xs font-semibold tracking-[0.2em] text-brand-gold uppercase">Explora</p>
-                                    <h2 className="font-display mt-2 text-4xl font-semibold text-brand-text sm:text-5xl">Compra por categoría</h2>
+                                    <Eyebrow>Explora</Eyebrow>
+                                    <h2 className="font-display mt-4 text-4xl font-medium text-brand-text sm:text-5xl">
+                                        Compra por <span className="text-brand-mauve italic">categoría</span>
+                                    </h2>
                                 </div>
-                                <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-dark">
+                                <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-text">
                                     Ver todo <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                                 </Link>
                             </div>
                         </Reveal>
 
-                        <div className="grid auto-rows-[10rem] grid-cols-2 gap-4 md:grid-cols-4">
-                            {tiles.map((cat, i) => {
-                                const CategoryIcon = categoryIcon(cat.name);
-
-                                return (
-                                <Reveal key={cat.name} delay={i * 60} className={i === 0 ? 'col-span-2 row-span-2' : i === 3 ? 'md:col-span-2' : ''}>
-                                    <Link
-                                        href={`/store/products?category=${encodeURIComponent(cat.name)}`}
-                                        className={`group relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border border-brand-rose/60 p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-brand-gold/20 ${
-                                            i === 0
-                                                ? 'border-transparent bg-gradient-to-br from-brand-text via-[#5B4B86] to-brand-mauve text-white'
-                                                : 'bg-white text-brand-text hover:border-brand-gold/50'
-                                        }`}
-                                    >
-                                        <span className={`grid place-items-center rounded-full transition-transform duration-500 group-hover:scale-105 ${
-                                            i === 0 ? 'h-16 w-16 bg-white/15 text-white' : 'h-11 w-11 bg-brand-blush text-brand-mauve'
-                                        }`}>
-                                            <CategoryIcon className={i === 0 ? 'h-7 w-7' : 'h-5 w-5'} strokeWidth={1.5} />
-                                        </span>
-                                        <div>
-                                            <h3 className={`font-display font-semibold ${i === 0 ? 'text-3xl' : 'text-lg'}`}>{cat.name}</h3>
-                                            <p className={`mt-0.5 text-sm ${i === 0 ? 'text-white/80' : 'text-brand-text/60'}`}>
-                                                {cat.count} {cat.count === 1 ? 'producto' : 'productos'}
-                                            </p>
-                                        </div>
-                                        <ArrowRight className={`absolute top-6 right-6 h-5 w-5 -translate-x-2 opacity-0 transition-all group-hover:translate-x-0 group-hover:opacity-100 ${i === 0 ? 'text-white' : 'text-brand-gold'}`} />
-                                    </Link>
+                        <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4 lg:pb-10">
+                            {tiles.map((cat, i) => (
+                                <Reveal key={cat.name} delay={(i % 4) * 80}>
+                                    <CategoryCard category={cat} index={i % 4} />
                                 </Reveal>
-                                );
-                            })}
+                            ))}
                         </div>
                     </div>
                 </section>
             )}
 
-            <section className="bg-brand-cream-alt/70 py-20">
+            <section className="bg-brand-blush/50 py-24">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <Reveal>
-                        <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+                        <div className="mb-12 flex flex-wrap items-end justify-between gap-4">
                             <div>
-                                <p className="text-xs font-semibold tracking-[0.2em] text-brand-gold uppercase">Selección</p>
-                                <h2 className="font-display mt-2 text-4xl font-semibold text-brand-text sm:text-5xl">Favoritos del momento</h2>
+                                <Eyebrow>Selección</Eyebrow>
+                                <h2 className="font-display mt-4 text-4xl font-medium text-brand-text sm:text-5xl">
+                                    Favoritos del <span className="text-brand-mauve italic">momento</span>
+                                </h2>
                             </div>
-                            <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-gold-dark">
+                            <Link href="/store/products" className="group inline-flex items-center gap-2 text-sm font-semibold text-brand-text">
                                 Ver catálogo <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                             </Link>
                         </div>
@@ -216,17 +251,23 @@ export default function StoreIndex({ featuredProducts, categories, brands }: Rea
                 </div>
             </section>
 
-            <section className="py-20">
+            <section className="py-24">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {perks(STORE.freeShippingFrom).map(({ icon: Icon, title, desc }, i) => (
-                            <Reveal key={title} delay={i * 70}>
-                                <div className="h-full rounded-3xl border border-brand-rose/60 bg-white p-6">
-                                    <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-cream-alt text-brand-gold-dark">
-                                        <Icon className="h-5 w-5" />
-                                    </span>
-                                    <h3 className="font-display mt-4 text-lg font-semibold text-brand-text">{title}</h3>
-                                    <p className="mt-1 text-sm text-brand-text/60">{desc}</p>
+                    <Reveal>
+                        <div className="mx-auto max-w-2xl text-center">
+                            <div className="flex justify-center"><Eyebrow>Tu ritual</Eyebrow></div>
+                            <h2 className="font-display mt-4 text-4xl font-medium text-brand-text sm:text-5xl">
+                                Una rutina en <span className="text-brand-mauve italic">tres pasos</span>
+                            </h2>
+                        </div>
+                    </Reveal>
+                    <div className="mt-14 grid gap-6 md:grid-cols-3">
+                        {routine.map((r, i) => (
+                            <Reveal key={r.step} delay={i * 90}>
+                                <div className="relative h-full overflow-hidden rounded-[2rem] border border-brand-rose/70 bg-white p-8">
+                                    <span className="font-display text-7xl leading-none font-medium text-brand-blush">{r.step}</span>
+                                    <h3 className="font-display mt-4 text-2xl font-medium text-brand-text">{r.title}</h3>
+                                    <p className="mt-2 text-sm leading-relaxed text-brand-text/65">{r.desc}</p>
                                 </div>
                             </Reveal>
                         ))}
@@ -234,22 +275,43 @@ export default function StoreIndex({ featuredProducts, categories, brands }: Rea
                 </div>
             </section>
 
-            <section className="px-4 pb-20 sm:px-6 lg:px-8">
+            <section className="pb-24">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="grid gap-px overflow-hidden rounded-[2rem] border border-brand-rose/70 bg-brand-rose/70 sm:grid-cols-2 lg:grid-cols-4">
+                        {perks(STORE.freeShippingFrom).map(({ icon: Icon, title, desc }, i) => (
+                            <Reveal key={title} delay={i * 70}>
+                                <div className="flex h-full items-start gap-4 bg-white p-6">
+                                    <span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-brand-blush text-brand-mauve">
+                                        <Icon className="h-5 w-5" strokeWidth={1.5} />
+                                    </span>
+                                    <div>
+                                        <h3 className="font-display text-lg font-medium text-brand-text">{title}</h3>
+                                        <p className="mt-0.5 text-sm text-brand-text/60">{desc}</p>
+                                    </div>
+                                </div>
+                            </Reveal>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section className="px-4 pb-24 sm:px-6 lg:px-8">
                 <Reveal>
-                    <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-text via-[#5B4B86] to-brand-mauve px-6 py-16 text-center sm:px-12">
-                        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/20 blur-3xl" />
-                        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-text/20 blur-3xl" />
-                        <h2 className="font-display relative text-4xl font-semibold text-white sm:text-5xl">¿No sabes por dónde empezar?</h2>
-                        <p className="relative mx-auto mt-4 max-w-xl text-white/85">
+                    <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-text via-[#5B4B86] to-brand-mauve px-6 py-20 text-center sm:px-12">
+                        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-blush/20 blur-3xl" />
+                        <div className="relative flex justify-center"><Eyebrow light>Asesoría gratuita</Eyebrow></div>
+                        <h2 className="font-display relative mt-5 text-4xl font-medium text-white sm:text-5xl">¿No sabes por dónde empezar?</h2>
+                        <p className="relative mx-auto mt-4 max-w-xl text-white/80">
                             Cuéntanos tu tipo de piel y te armamos una rutina a tu medida. Sin costo, por WhatsApp.
                         </p>
                         <a
-                            href={`https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent('¡Hola! Me gustaría que me ayuden a armar mi rutina de skincare.')}`}
+                            href={STORE.whatsappUrl('¡Hola! Me gustaría que me ayuden a armar mi rutina de skincare.')}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative mt-8 inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-brand-text shadow-xl transition-transform hover:scale-105"
+                            className="relative mt-9 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-brand-text shadow-xl transition-transform hover:scale-105"
                         >
-                            Hablar con una asesora <ArrowRight className="h-4 w-4" />
+                            <MessageCircle className="h-4 w-4 text-brand-mauve" /> Hablar con una asesora
                         </a>
                     </div>
                 </Reveal>

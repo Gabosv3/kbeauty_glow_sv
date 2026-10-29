@@ -24,10 +24,17 @@ class AuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::guard('customer')->attempt($credentials, $request->boolean('remember'))) {
-            return back()->withErrors([
-                'email' => 'El correo o la contraseña no coinciden.',
-            ])->onlyInput('email');
+        $remember = $request->boolean('remember');
+
+        if (! Auth::guard('customer')->attempt($credentials, $remember)) {
+            // Los usuarios del panel entran a la tienda con las mismas credenciales.
+            if (! Auth::guard('web')->attempt($credentials, $remember)) {
+                return back()->withErrors([
+                    'email' => 'El correo o la contraseña no coinciden.',
+                ])->onlyInput('email');
+            }
+
+            Auth::guard('customer')->login(Customer::forPanelUser(Auth::guard('web')->user()), $remember);
         }
 
         $request->session()->regenerate();
@@ -60,6 +67,7 @@ class AuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard('customer')->logout();
+        Auth::guard('web')->logout(); // si venía del panel, la sesión se cierra en ambos lados
 
         $request->session()->regenerateToken();
 

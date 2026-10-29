@@ -22,12 +22,13 @@ use App\Http\Controllers\Store\Account\AccountController;
 use App\Http\Controllers\Store\Account\AuthController as CustomerAuthController;
 use App\Http\Controllers\Store\StoreController;
 use App\Http\Middleware\EnsureAdminAuth;
+use App\Http\Middleware\LinkPanelUserToCustomer;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [StoreController::class, 'index'])->name('home');
 
 // Store (public)
-Route::prefix('store')->name('store.')->group(function () {
+Route::prefix('store')->name('store.')->middleware(LinkPanelUserToCustomer::class)->group(function () {
     Route::get('/', [StoreController::class, 'index'])->name('index');
     Route::get('/products', [StoreController::class, 'products'])->name('products');
     Route::get('/products/{slug}', [StoreController::class, 'product'])->name('product');

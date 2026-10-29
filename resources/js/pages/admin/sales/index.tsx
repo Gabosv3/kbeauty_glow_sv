@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useOpenOnNew } from '@/hooks/use-open-on-new';
 import { admin } from '@/lib/admin-routes';
 import type { Product, Sale } from '@/types';
 
@@ -38,6 +39,7 @@ const paymentLabels: Record<string, string> = { cash: 'Efectivo', card: 'Tarjeta
 
 export default function SalesIndex({ sales, products }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
+    useOpenOnNew(() => setOpenCreate(true));
 
     const form = useForm<SaleForm>({
         customer_name: '', customer_email: '', payment_method: 'cash',

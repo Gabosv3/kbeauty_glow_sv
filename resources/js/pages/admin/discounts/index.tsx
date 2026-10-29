@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { useOpenOnNew } from '@/hooks/use-open-on-new';
 import { admin } from '@/lib/admin-routes';
 
 type Option = { id: number; name: string };
@@ -73,6 +74,7 @@ type Props = { discounts: Discount[]; categories: Option[]; products: Option[] }
 
 export default function DiscountsIndex({ discounts, categories, products }: Readonly<Props>) {
     const [open, setOpen] = useState(false);
+    useOpenOnNew(() => setOpen(true));
     const [editing, setEditing] = useState<Discount | null>(null);
     const form = useForm<DiscountForm>(empty);
 

@@ -16,6 +16,15 @@ class Customer extends Authenticatable
         return ['password' => 'hashed'];
     }
 
+    /** Cliente vinculado a un usuario del panel (mismo correo y misma contraseña). */
+    public static function forPanelUser(User $user): self
+    {
+        return self::firstOrCreate(
+            ['email' => $user->email],
+            ['name' => $user->name, 'password' => $user->password],
+        );
+    }
+
     public function sales(): HasMany
     {
         return $this->hasMany(Sale::class);

@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { ShoppingCart, TrendingUp, Scale, Package } from 'lucide-react';
+import { FileText, Package, Scale, ShoppingBag, ShoppingCart, TrendingUp } from 'lucide-react';
 import { admin } from '@/lib/admin-routes';
 import { dashboard } from '@/routes/admin';
 
@@ -56,58 +56,46 @@ export default function Dashboard({ stats, salesToday, salesMonth, salesSeries, 
         <>
             <Head title="Dashboard" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
-                    {/* Total Compras */}
-                    <div className="flex items-center gap-4 rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                            <ShoppingCart className="h-6 w-6 text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground">Total Compras</p>
-                            <p className="font-display text-2xl font-semibold">{formatCurrency(stats.totalPurchases)}</p>
-                            <p className="text-xs text-muted-foreground">{stats.purchasesCount} compras registradas</p>
-                        </div>
+                <div className="flex flex-wrap items-end justify-between gap-4 px-1">
+                    <div>
+                        <p className="text-[11px] font-semibold tracking-[0.22em] text-primary uppercase">Resumen</p>
+                        <h1 className="font-display text-3xl font-semibold tracking-tight">Hola, bienvenida de vuelta</h1>
+                        <p className="text-sm text-muted-foreground">Así va tu tienda hoy.</p>
                     </div>
-
-                    {/* Total Ventas */}
-                    <div className="flex items-center gap-4 rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-green-100 dark:bg-green-900/30">
-                            <TrendingUp className="h-6 w-6 text-green-600 dark:text-green-400" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground">Total Ventas</p>
-                            <p className="font-display text-2xl font-semibold">{formatCurrency(stats.totalSales)}</p>
-                            <p className="text-xs text-muted-foreground">{stats.salesCount} ventas completadas</p>
-                        </div>
-                    </div>
-
-                    {/* Balance */}
-                    <div className="flex items-center gap-4 rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
-                        <div className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg ${balancePositive ? 'bg-emerald-100 dark:bg-emerald-900/30' : 'bg-red-100 dark:bg-red-900/30'}`}>
-                            <Scale className={`h-6 w-6 ${balancePositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}`} />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground">Balance</p>
-                            <p className={`font-display text-2xl font-semibold ${balancePositive ? 'text-emerald-600' : 'text-red-600'}`}>
-                                {formatCurrency(stats.balance)}
-                            </p>
-                            <p className="text-xs text-muted-foreground">Ventas − Compras</p>
-                        </div>
-                    </div>
-
-                    {/* Productos en stock */}
-                    <div className="flex items-center gap-4 rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
-                        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-purple-100 dark:bg-purple-900/30">
-                            <Package className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-muted-foreground">Unidades en Stock</p>
-                            <p className="font-display text-2xl font-semibold">{stats.totalStock.toLocaleString('es-SV')}</p>
-                            <p className="text-xs text-muted-foreground">{stats.productsCount} productos activos</p>
-                        </div>
+                    <div className="flex flex-wrap gap-2">
+                        <Link href={`${admin.sales.index}?new=1`} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-sm transition-opacity hover:opacity-90">
+                            <ShoppingBag className="size-4" /> Nueva venta
+                        </Link>
+                        <Link href={`${admin.quotes.index}?new=1`} className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-accent">
+                            <FileText className="size-4" /> Nueva cotización
+                        </Link>
+                        <Link href={admin.products.index} className="inline-flex items-center gap-2 rounded-full border bg-card px-4 py-2 text-sm font-medium transition-colors hover:bg-accent">
+                            <Package className="size-4" /> Inventario
+                        </Link>
                     </div>
                 </div>
-                <section className="rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
+
+                <div className="grid auto-rows-min gap-4 md:grid-cols-2 lg:grid-cols-4">
+                    {[
+                        { label: 'Total compras', value: formatCurrency(stats.totalPurchases), note: `${stats.purchasesCount} compras registradas`, icon: ShoppingCart, tone: 'bg-sky-50 text-sky-600 dark:bg-sky-950/40 dark:text-sky-300', valueClass: '' },
+                        { label: 'Total ventas', value: formatCurrency(stats.totalSales), note: `${stats.salesCount} ventas completadas`, icon: TrendingUp, tone: 'bg-primary/10 text-primary', valueClass: '' },
+                        { label: 'Balance', value: formatCurrency(stats.balance), note: 'Ventas − Compras', icon: Scale, tone: balancePositive ? 'bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-300' : 'bg-red-50 text-red-600 dark:bg-red-950/40 dark:text-red-300', valueClass: balancePositive ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600' },
+                        { label: 'Unidades en stock', value: stats.totalStock.toLocaleString('es-SV'), note: `${stats.productsCount} productos activos`, icon: Package, tone: 'bg-rose-50 text-rose-600 dark:bg-rose-950/40 dark:text-rose-300', valueClass: '' },
+                    ].map((card) => (
+                        <div key={card.label} className="rounded-2xl border border-sidebar-border/70 bg-card p-5 shadow-sm dark:border-sidebar-border">
+                            <div className="flex items-center justify-between">
+                                <p className="text-[11px] font-semibold tracking-[0.16em] text-muted-foreground uppercase">{card.label}</p>
+                                <span className={`grid size-9 place-items-center rounded-full ${card.tone}`}>
+                                    <card.icon className="size-4" strokeWidth={1.75} />
+                                </span>
+                            </div>
+                            <p className={`font-display mt-3 text-3xl font-semibold ${card.valueClass}`}>{card.value}</p>
+                            <p className="mt-1 text-xs text-muted-foreground">{card.note}</p>
+                        </div>
+                    ))}
+                </div>
+
+                <section className="rounded-2xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
                     <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <h2 className="font-display text-lg font-semibold">Ventas de los últimos 30 días</h2>
@@ -144,7 +132,7 @@ export default function Dashboard({ stats, salesToday, salesMonth, salesSeries, 
                 </section>
 
                 <div className="grid flex-1 gap-4 lg:grid-cols-3">
-                    <section className="rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm lg:col-span-2 dark:border-sidebar-border">
+                    <section className="rounded-2xl border border-sidebar-border/70 bg-card p-6 shadow-sm lg:col-span-2 dark:border-sidebar-border">
                         <div className="mb-4 flex items-center justify-between">
                             <h2 className="font-display text-lg font-semibold">Ventas recientes</h2>
                             <Link href={admin.sales.index} className="text-sm font-medium text-primary hover:underline">
@@ -181,7 +169,7 @@ export default function Dashboard({ stats, salesToday, salesMonth, salesSeries, 
                         )}
                     </section>
 
-                    <section className="rounded-xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
+                    <section className="rounded-2xl border border-sidebar-border/70 bg-card p-6 shadow-sm dark:border-sidebar-border">
                         <div className="mb-4 flex items-center justify-between">
                             <h2 className="font-display text-lg font-semibold">Stock bajo</h2>
                             <Link href={admin.products.index} className="text-sm font-medium text-primary hover:underline">

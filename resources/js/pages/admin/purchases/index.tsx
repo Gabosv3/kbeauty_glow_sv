@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useOpenOnNew } from '@/hooks/use-open-on-new';
 import { admin } from '@/lib/admin-routes';
 import type { Product, Purchase, Supplier } from '@/types';
 
@@ -40,6 +41,7 @@ const statusLabels: Record<string, string> = {
 
 export default function PurchasesIndex({ purchases, suppliers, products }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
+    useOpenOnNew(() => setOpenCreate(true));
     const [productSearch, setProductSearch] = useState<string[]>([]);
 
     const form = useForm<PurchaseForm>({
