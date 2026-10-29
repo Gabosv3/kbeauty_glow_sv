@@ -42,7 +42,7 @@ export function AppSidebar() {
 
             <SidebarFooter>
                 <div className="px-2 py-2 group-data-[collapsible=icon]:hidden">
-                    <AppearanceToggleTab className="w-full justify-center" />
+                    <AppearanceToggleTab iconOnly className="flex w-full" />
                 </div>
                 <NavUser />
             </SidebarFooter>

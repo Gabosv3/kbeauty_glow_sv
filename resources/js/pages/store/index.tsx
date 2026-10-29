@@ -1,6 +1,6 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { ArrowRight, ArrowUpRight, BadgeCheck, MessageCircle, Search, ShieldCheck, Sparkles, Truck } from 'lucide-react';
-import { createElement, useState } from 'react';
+import { createElement, useEffect, useState } from 'react';
 import { ProductCard } from '@/components/store/product-card';
 import type { StoreProduct } from '@/components/store/product-card';
 import { Reveal } from '@/components/store/reveal';
@@ -40,10 +40,48 @@ function Eyebrow({ children, light = false }: Readonly<{ children: React.ReactNo
     );
 }
 
+/** Foto del hero: al cambiar de producto entra con un fundido suave sobre la anterior. */
+function RotatingShot({ shot, delay }: Readonly<{ shot: StoreProduct; delay: number }>) {
+    const [current, setCurrent] = useState(shot);
+    const [previous, setPrevious] = useState<StoreProduct | null>(null);
+
+    if (shot.id !== current.id) {
+        setPrevious(current);
+        setCurrent(shot);
+    }
+
+    return (
+        <div className="relative h-full w-full overflow-hidden rounded-t-full">
+            {previous && <img src={previous.image ?? undefined} alt="" className="absolute inset-0 h-full w-full object-cover" />}
+            <img
+                key={current.id}
+                src={current.image ?? undefined}
+                alt={current.name}
+                className="absolute inset-0 h-full w-full animate-[hero-fade_1000ms_ease-out_both] object-cover motion-reduce:animate-none"
+                style={{ animationDelay: `${delay}ms` }}
+            />
+        </div>
+    );
+}
+
 function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
     const STORE = useStore();
     const [query, setQuery] = useState('');
-    const shots = products.filter((p) => p.image).slice(0, 3);
+    const pool = products.filter((p) => p.image);
+    const [tick, setTick] = useState(0);
+
+    useEffect(() => {
+        if (pool.length <= 3 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            return;
+        }
+
+        const id = setInterval(() => setTick((t) => t + 1), 4500);
+
+        return () => clearInterval(id);
+    }, [pool.length]);
+
+    // Las tres fotos avanzan juntas por el grupo, sin repetir producto en pantalla.
+    const shots = [0, 1, 2].map((i) => pool[(tick * 3 + i) % Math.max(pool.length, 1)]);
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
@@ -102,8 +140,8 @@ function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
                         { shot: shots[2], className: 'h-52 sm:h-64' },
                     ].map(({ shot, className }, i) =>
                         shot ? (
-                            <div key={shot.id} className={`overflow-hidden rounded-t-full border border-white/20 bg-white/5 p-1.5 shadow-2xl shadow-black/30 ${className}`} style={{ animationDelay: `${i * 120}ms` }}>
-                                <img src={shot.image ?? undefined} alt={shot.name} className="h-full w-full rounded-t-full object-cover" />
+                            <div key={i} className={`overflow-hidden rounded-t-full border border-white/20 bg-white/5 p-1.5 shadow-2xl shadow-black/30 ${className}`}>
+                                <RotatingShot shot={shot} delay={i * 150} />
                             </div>
                         ) : (
                             <div key={i} className={`rounded-t-full border border-white/15 bg-white/5 ${className}`} />
@@ -297,21 +335,21 @@ export default function StoreIndex({ featuredProducts, categories, brands }: Rea
 
             <section className="px-4 pb-24 sm:px-6 lg:px-8">
                 <Reveal>
-                    <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-brand-text via-[#5B4B86] to-brand-mauve px-6 py-20 text-center sm:px-12">
-                        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/10 blur-3xl" />
-                        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-blush/20 blur-3xl" />
-                        <div className="relative flex justify-center"><Eyebrow light>Asesoría gratuita</Eyebrow></div>
-                        <h2 className="font-display relative mt-5 text-4xl font-medium text-white sm:text-5xl">¿No sabes por dónde empezar?</h2>
-                        <p className="relative mx-auto mt-4 max-w-xl text-white/80">
+                    <div className="relative mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] border border-brand-rose/60 bg-gradient-to-br from-[#EFE6F8] via-[#F8EAF0] to-[#F3EFFC] px-6 py-20 text-center sm:px-12">
+                        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-white/70 blur-3xl" />
+                        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-brand-blush blur-3xl" />
+                        <div className="relative flex justify-center"><Eyebrow>Asesoría gratuita</Eyebrow></div>
+                        <h2 className="font-display relative mt-5 text-4xl font-medium text-brand-text sm:text-5xl">¿No sabes por dónde empezar?</h2>
+                        <p className="relative mx-auto mt-4 max-w-xl text-brand-text/70">
                             Cuéntanos tu tipo de piel y te armamos una rutina a tu medida. Sin costo, por WhatsApp.
                         </p>
                         <a
                             href={STORE.whatsappUrl('¡Hola! Me gustaría que me ayuden a armar mi rutina de skincare.')}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="relative mt-9 inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-brand-text shadow-xl transition-transform hover:scale-105"
+                            className="relative mt-9 inline-flex items-center gap-2 rounded-full bg-brand-text px-8 py-3.5 text-sm font-semibold text-white shadow-xl shadow-brand-text/20 transition-transform hover:scale-105"
                         >
-                            <MessageCircle className="h-4 w-4 text-brand-mauve" /> Hablar con una asesora
+                            <MessageCircle className="h-4 w-4 text-white" /> Hablar con una asesora
                         </a>
                     </div>
                 </Reveal>
