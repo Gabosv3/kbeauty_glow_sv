@@ -1,11 +1,11 @@
 ﻿import { Link, router, usePage } from '@inertiajs/react';
-import { ShoppingCart, Search, Menu, X, Mail, MessageCircle, Trash2, Plus, Minus, Package, Instagram, Facebook, Music2 } from 'lucide-react';
+import { ShoppingCart, Search, User, Menu, X, Mail, MessageCircle, Trash2, Plus, Minus, Package, Instagram, Facebook, Music2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { CartProvider, useCart } from '@/contexts/cart-context';
-import { STORE, whatsappUrl } from '@/lib/store-config';
+import { useStore } from '@/lib/store-config';
 import { useCartQuote } from '@/lib/use-cart-quote';
 
 const navLinks = [
@@ -15,7 +15,7 @@ const navLinks = [
     { label: 'Contacto', href: '/store/contacto' },
 ];
 
-function buildCartWhatsAppUrl(items: { name: string; price: number; quantity: number }[]): string {
+function buildCartWhatsAppUrl(items: { name: string; price: number; quantity: number }[], whatsappUrl: (message: string) => string): string {
     const lines = items
         .map((it, i) => `${i + 1}. *${it.name}* — Cant: ${it.quantity} — $${it.price.toFixed(2)} c/u — Subtotal: $${(it.price * it.quantity).toFixed(2)}`)
         .join('\n');
@@ -26,6 +26,7 @@ function buildCartWhatsAppUrl(items: { name: string; price: number; quantity: nu
 }
 
 function CartDrawer() {
+    const STORE = useStore();
     const { items, removeItem, updateQty, clearCart, totalItems, totalPrice: localTotal, cartOpen, setCartOpen } = useCart();
     const { quote } = useCartQuote(items, null, cartOpen);
     // Precios reales del servidor (con descuentos); mientras llegan, se muestra lo guardado.
@@ -196,7 +197,7 @@ function CartDrawer() {
                             Finalizar compra
                         </Link>
                         <a
-                            href={buildCartWhatsAppUrl(items)}
+                            href={buildCartWhatsAppUrl(items, STORE.whatsappUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="flex w-full items-center justify-center gap-2 rounded-full border border-[#25D366] py-2.5 text-sm font-semibold text-[#128C7E] transition-colors hover:bg-[#25D366]/10"
@@ -220,10 +221,12 @@ function CartDrawer() {
 }
 
 function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>) {
+    const STORE = useStore();
     const [mobileOpen, setMobileOpen] = useState(false);
     const [searchOpen, setSearchOpen] = useState(false);
     const { totalItems, setCartOpen } = useCart();
-    const { url } = usePage();
+    const { url, props } = usePage<{ customer: { name: string } | null }>();
+    const customer = props.customer;
     const [query, setQuery] = useState('');
 
     const isActive = (href: string) => (href === '/' ? url === '/' : !href.includes('?') && url.split('?')[0] === href);
@@ -297,6 +300,15 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
                                     </span>
                                 )}
                             </Button>
+                            <Button variant="ghost" size="icon" asChild>
+                                <Link
+                                    href={customer ? '/store/cuenta' : '/store/cuenta/login'}
+                                    aria-label={customer ? 'Mi cuenta' : 'Iniciar sesión'}
+                                    title={customer ? customer.name : 'Iniciar sesión'}
+                                >
+                                    <User className="h-4 w-4" />
+                                </Link>
+                            </Button>
                             <Button
                                 variant="ghost"
                                 size="icon"
@@ -369,7 +381,7 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
                                     { label: 'Instagram', href: STORE.socials.instagram, Icon: Instagram },
                                     { label: 'TikTok', href: STORE.socials.tiktok, Icon: Music2 },
                                     { label: 'Facebook', href: STORE.socials.facebook, Icon: Facebook },
-                                    { label: 'WhatsApp', href: whatsappUrl('¡Hola! Quisiera más información 🌸'), Icon: MessageCircle },
+                                    { label: 'WhatsApp', href: STORE.whatsappUrl('¡Hola! Quisiera más información 🌸'), Icon: MessageCircle },
                                 ].map(({ label, href, Icon }) => (
                                     <a
                                         key={label}
@@ -432,7 +444,7 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
             </footer>
 
             <a
-                href={whatsappUrl('¡Hola! Estoy en su tienda y me gustaría obtener más información. 😊')}
+                href={STORE.whatsappUrl('¡Hola! Estoy en su tienda y me gustaría obtener más información. 😊')}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Contactar por WhatsApp"

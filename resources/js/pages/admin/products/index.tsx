@@ -1,5 +1,5 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { AlertTriangle, ImagePlus, Images, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
+import { AlertTriangle, FileSpreadsheet, ImagePlus, Images, Pencil, Plus, Search, Trash2, X } from 'lucide-react';
 import { useRef, useState } from 'react';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
@@ -39,6 +39,10 @@ export default function ProductsIndex({ products, categories, brands }: Props) {
     const [openCreate, setOpenCreate] = useState(false);
     const [editTarget, setEditTarget] = useState<Product | null>(null);
     const [imageProductId, setImageProductId] = useState<number | null>(null);
+
+    const invested = products.reduce((s, p) => s + Number(p.cost_price) * p.stock, 0);
+    const retail = products.reduce((s, p) => s + Number(p.sale_price) * p.stock, 0);
+    const totalUnits = products.reduce((s, p) => s + p.stock, 0);
 
     // Filtros
     const [filterCategory, setFilterCategory] = useState('');
@@ -148,9 +152,31 @@ return;
             <div className="space-y-6 p-6">
                 <div className="flex items-center justify-between">
                     <Heading title="Productos" description="Inventario de productos." variant="small" />
-                    <Button onClick={() => setOpenCreate(true)} size="sm">
-                        <Plus className="mr-2 size-4" /> Nuevo producto
-                    </Button>
+                    <div className="flex items-center gap-2">
+                        <Button variant="outline" size="sm" asChild>
+                            <a href={admin.products.export}>
+                                <FileSpreadsheet className="mr-2 size-4" /> Exportar Excel
+                            </a>
+                        </Button>
+                        <Button onClick={() => setOpenCreate(true)} size="sm">
+                            <Plus className="mr-2 size-4" /> Nuevo producto
+                        </Button>
+                    </div>
+                </div>
+
+                {/* Inversión en inventario */}
+                <div className="grid gap-4 sm:grid-cols-3">
+                    {[
+                        { label: 'Invertido en inventario', hint: 'costo × stock actual', value: invested },
+                        { label: 'Valor a precio de venta', hint: 'precio × stock actual', value: retail },
+                        { label: 'Ganancia potencial', hint: 'si vendes todo el stock', value: retail - invested },
+                    ].map((card) => (
+                        <div key={card.label} className="rounded-lg border p-4">
+                            <p className="text-xs uppercase tracking-wide text-muted-foreground">{card.label}</p>
+                            <p className="mt-1 font-mono text-2xl font-bold">${card.value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</p>
+                            <p className="text-xs text-muted-foreground">{card.hint} · {totalUnits} unidades</p>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Filtros y buscador */}

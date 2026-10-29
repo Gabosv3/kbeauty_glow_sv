@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
 import { ArrowRight, Heart, Leaf, Sparkles } from 'lucide-react';
 import { Reveal } from '@/components/store/reveal';
-import { STORE } from '@/lib/store-config';
+import { useStore } from '@/lib/store-config';
 
 const values = [
     { icon: Sparkles, title: 'Solo lo que funciona', desc: 'Probamos y seleccionamos cada producto antes de ofrecértelo. Nada de relleno.' },
@@ -10,6 +10,8 @@ const values = [
 ];
 
 export default function About() {
+    const STORE = useStore();
+
     return (
         <>
             <Head title={`Nosotros — ${STORE.name}`} />

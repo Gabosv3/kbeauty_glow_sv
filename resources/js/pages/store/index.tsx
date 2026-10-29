@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ProductCard } from '@/components/store/product-card';
 import type { StoreProduct } from '@/components/store/product-card';
 import { Reveal } from '@/components/store/reveal';
-import { categoryEmoji, STORE } from '@/lib/store-config';
+import { categoryEmoji, useStore } from '@/lib/store-config';
 
 interface Props {
     featuredProducts: StoreProduct[];
@@ -12,14 +12,15 @@ interface Props {
     brands: string[];
 }
 
-const perks = [
-    { icon: Truck, title: 'Envío gratis', desc: `En compras desde $${STORE.freeShippingFrom}` },
+const perks = (freeShippingFrom: number) => [
+    { icon: Truck, title: 'Envío gratis', desc: `En compras desde $${freeShippingFrom}` },
     { icon: BadgeCheck, title: '100% auténtico', desc: 'Directo de Corea, sin imitaciones' },
     { icon: ShieldCheck, title: 'Compra segura', desc: 'Confirmas tu pedido por WhatsApp' },
     { icon: Sparkles, title: 'Asesoría real', desc: 'Te ayudamos a armar tu rutina' },
 ];
 
 function Hero({ products }: Readonly<{ products: StoreProduct[] }>) {
+    const STORE = useStore();
     const [query, setQuery] = useState('');
     const shots = products.filter((p) => p.image).slice(0, 3);
 
@@ -128,6 +129,7 @@ function BrandMarquee({ brands }: Readonly<{ brands: string[] }>) {
 }
 
 export default function StoreIndex({ featuredProducts, categories, brands }: Readonly<Props>) {
+    const STORE = useStore();
     const tiles = categories.slice(0, 6);
 
     return (
@@ -207,7 +209,7 @@ export default function StoreIndex({ featuredProducts, categories, brands }: Rea
             <section className="py-20">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        {perks.map(({ icon: Icon, title, desc }, i) => (
+                        {perks(STORE.freeShippingFrom).map(({ icon: Icon, title, desc }, i) => (
                             <Reveal key={title} delay={i * 70}>
                                 <div className="h-full rounded-3xl border border-brand-rose/60 bg-white p-6">
                                     <span className="grid h-11 w-11 place-items-center rounded-2xl bg-brand-cream-alt text-brand-gold-dark">

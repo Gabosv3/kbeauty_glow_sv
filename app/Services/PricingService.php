@@ -13,6 +13,8 @@ use Illuminate\Support\Collection;
  */
 class PricingService
 {
+    public function __construct(private readonly StoreSettings $settings) {}
+
     /** @var Collection<int, Discount>|null */
     private ?Collection $discounts = null;
 
@@ -46,11 +48,11 @@ class PricingService
 
     public function shippingFor(float $subtotal): float
     {
-        if ($subtotal <= 0 || $subtotal >= (float) config('store.free_shipping_from')) {
+        if ($subtotal <= 0 || $subtotal >= (float) $this->settings->get('free_shipping_from')) {
             return 0.0;
         }
 
-        return (float) config('store.shipping_cost');
+        return (float) $this->settings->get('shipping_cost');
     }
 
     /**

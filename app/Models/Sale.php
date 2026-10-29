@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[Fillable([
-    'team_id', 'user_id', 'reference', 'status', 'customer_name',
+    'team_id', 'user_id', 'customer_id', 'reference', 'status', 'customer_name',
     'customer_email', 'subtotal', 'discount', 'tax', 'total',
     'payment_method', 'notes', 'channel', 'customer_phone', 'delivery_department',
     'delivery_municipality', 'delivery_address', 'shipping_cost', 'coupon_code',
@@ -38,6 +38,11 @@ class Sale extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function customer(): BelongsTo
+    {
+        return $this->belongsTo(Customer::class);
     }
 
     public function items(): HasMany

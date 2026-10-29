@@ -14,6 +14,12 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\CouponController;
 use App\Http\Controllers\Admin\DiscountController;
 use App\Http\Controllers\Store\CheckoutController;
+use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\FeaturedController;
+use App\Http\Controllers\Admin\QuoteController;
+use App\Http\Controllers\Admin\SettingsController;
+use App\Http\Controllers\Store\Account\AccountController;
+use App\Http\Controllers\Store\Account\AuthController as CustomerAuthController;
 use App\Http\Controllers\Store\StoreController;
 use App\Http\Middleware\EnsureAdminAuth;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +37,22 @@ Route::prefix('store')->name('store.')->group(function () {
     Route::get('/pedido/{reference}', [CheckoutController::class, 'order'])->name('order');
     Route::get('/nosotros', [StoreController::class, 'about'])->name('about');
     Route::get('/contacto', [StoreController::class, 'contact'])->name('contact');
+
+    // Cuentas de clientes (guard "customer", separado del admin)
+    Route::prefix('cuenta')->group(function () {
+        Route::middleware('guest:customer')->group(function () {
+            Route::get('/login', [CustomerAuthController::class, 'login'])->name('account.login');
+            Route::post('/login', [CustomerAuthController::class, 'authenticate'])->middleware('throttle:10,1');
+            Route::get('/registro', [CustomerAuthController::class, 'register'])->name('account.register');
+            Route::post('/registro', [CustomerAuthController::class, 'store'])->middleware('throttle:10,1');
+        });
+
+        Route::middleware('auth:customer')->group(function () {
+            Route::get('/', [AccountController::class, 'show'])->name('account');
+            Route::patch('/', [AccountController::class, 'update'])->name('account.update');
+            Route::post('/logout', [CustomerAuthController::class, 'logout'])->name('account.logout');
+        });
+    });
 });
 
 // Admin: Login
@@ -45,6 +67,23 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
 
         // Usuarios
         Route::get('users', [UserController::class, 'index'])->name('users.index');
+
+        // Clientes
+        Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+
+        // Cotizaciones
+        Route::get('quotes', [QuoteController::class, 'index'])->name('quotes.index');
+        Route::post('quotes', [QuoteController::class, 'store'])->name('quotes.store');
+        Route::get('quotes/{quote}', [QuoteController::class, 'show'])->name('quotes.show');
+        Route::get('quotes/{quote}/print', [QuoteController::class, 'print'])->name('quotes.print');
+        Route::post('quotes/{quote}/status', [QuoteController::class, 'status'])->name('quotes.status');
+        Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
+
+        // Destacados y ajustes de la tienda
+        Route::get('featured', [FeaturedController::class, 'index'])->name('featured.index');
+        Route::post('featured/{product}/toggle', [FeaturedController::class, 'toggle'])->name('featured.toggle');
+        Route::get('settings', [SettingsController::class, 'edit'])->name('settings.edit');
+        Route::put('settings', [SettingsController::class, 'update'])->name('settings.update');
 
         // Marcas
         Route::get('brands', [BrandController::class, 'index'])->name('brands.index');
@@ -66,6 +105,7 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
 
         // Productos
         Route::get('products', [ProductController::class, 'index'])->name('products.index');
+        Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
         Route::post('products', [ProductController::class, 'store'])->name('products.store');
         Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');

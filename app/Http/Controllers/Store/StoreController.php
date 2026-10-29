@@ -47,6 +47,8 @@ class StoreController extends Controller
     {
         // Disponibles primero, luego por nombre: la portada nunca abre con agotados.
         $featured = $this->activeProducts()
+            ->orderByDesc('featured')
+            ->orderByRaw('stock > 0 desc')
             ->orderByDesc('stock')
             ->orderBy('name')
             ->take(8)

@@ -7,9 +7,11 @@ use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\Sale;
 use App\Services\PricingService;
+use App\Services\StoreSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -18,7 +20,7 @@ use Inertia\Response;
 
 class CheckoutController extends Controller
 {
-    public function __construct(private readonly PricingService $pricing) {}
+    public function __construct(private readonly PricingService $pricing, private readonly StoreSettings $settings) {}
 
     /** Recalcula el carrito con precios reales, descuentos, cupón y envío (lo usa el carrito y el checkout). */
     public function quote(Request $request): JsonResponse
@@ -35,9 +37,19 @@ class CheckoutController extends Controller
 
     public function show(): Response
     {
+        $customer = Auth::guard('customer')->user();
+
         return Inertia::render('store/checkout', [
+            'prefill' => $customer ? [
+                'name' => $customer->name,
+                'phone' => $customer->phone ?? '',
+                'email' => $customer->email,
+                'department' => $customer->department ?? '',
+                'municipality' => $customer->municipality ?? '',
+                'address' => $customer->address ?? '',
+            ] : null,
             'departments' => config('store.departments'),
-            'freeShippingFrom' => (float) config('store.free_shipping_from'),
+            'freeShippingFrom' => (float) $this->settings->get('free_shipping_from'),
         ]);
     }
 
@@ -85,6 +97,7 @@ class CheckoutController extends Controller
             $sale = Sale::create([
                 'team_id' => $quote['lines'][0]['team_id'],
                 'user_id' => null,
+                'customer_id' => Auth::guard('customer')->id(),
                 'reference' => 'WEB-'.strtoupper(Str::random(8)),
                 'status' => 'pending',
                 'channel' => 'web',
@@ -146,7 +159,7 @@ class CheckoutController extends Controller
                     'subtotal' => (float) $i->subtotal,
                 ])->all(),
             ],
-            'whatsapp' => config('store.whatsapp'),
+            'whatsapp' => $this->settings->get('whatsapp'),
         ]);
     }
 }

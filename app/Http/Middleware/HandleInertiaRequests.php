@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Services\StoreSettings;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -43,6 +44,13 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user,
             ],
+            'customer' => fn () => ($c = $request->user('customer')) ? ['id' => $c->id, 'name' => $c->name, 'email' => $c->email] : null,
+            'store' => fn () => [
+                'name' => config('store.name'),
+                'handle' => config('store.handle'),
+                ...(new StoreSettings)->all(),
+            ],
+            'flash' => ['success' => fn () => $request->session()->get('success')],
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'currentTeam' => fn () => $user?->currentTeam ? $user->toUserTeam($user->currentTeam) : null,
             'teams' => fn () => $user?->toUserTeams(includeCurrent: true) ?? [],

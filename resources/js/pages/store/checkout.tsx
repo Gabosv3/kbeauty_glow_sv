@@ -2,12 +2,13 @@ import { Head, Link, router } from '@inertiajs/react';
 import { ArrowLeft, Check, Loader2, MessageCircle, Package, Tag, Truck } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/contexts/cart-context';
-import { STORE, whatsappUrl } from '@/lib/store-config';
+import { useStore } from '@/lib/store-config';
 import { useCartQuote } from '@/lib/use-cart-quote';
 
 interface Props {
     departments: string[];
     freeShippingFrom: number;
+    prefill: { name: string; phone: string; email: string; department: string; municipality: string; address: string } | null;
 }
 
 const field =
@@ -15,11 +16,21 @@ const field =
 
 const money = (n: number) => `$${n.toFixed(2)}`;
 
-export default function Checkout({ departments, freeShippingFrom }: Readonly<Props>) {
+export default function Checkout({ departments, freeShippingFrom, prefill }: Readonly<Props>) {
+    const STORE = useStore();
+    const { whatsappUrl } = STORE;
     const { items } = useCart();
     const [couponInput, setCouponInput] = useState('');
     const [coupon, setCoupon] = useState<string | null>(null);
-    const [data, setData] = useState({ name: '', phone: '', email: '', department: '', municipality: '', address: '', notes: '' });
+    const [data, setData] = useState({
+        name: prefill?.name ?? '',
+        phone: prefill?.phone ?? '',
+        email: prefill?.email ?? '',
+        department: prefill?.department ?? '',
+        municipality: prefill?.municipality ?? '',
+        address: prefill?.address ?? '',
+        notes: '',
+    });
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [sending, setSending] = useState(false);
 
@@ -87,6 +98,15 @@ export default function Checkout({ departments, freeShippingFrom }: Readonly<Pro
                     <form onSubmit={submit} className="space-y-8">
                         <section className="rounded-3xl border border-brand-rose/60 bg-white p-6 sm:p-8">
                             <h2 className="font-display text-xl font-semibold text-brand-text">1. Tus datos</h2>
+                            {prefill ? (
+                                <p className="mt-1 text-xs text-brand-text/60">Usamos los datos guardados en tu cuenta. Puedes editarlos para este pedido.</p>
+                            ) : (
+                                <p className="mt-1 text-xs text-brand-text/60">
+                                    ¿Ya tienes cuenta?{' '}
+                                    <Link href="/store/cuenta/login" className="font-semibold text-brand-gold-dark hover:underline">Inicia sesión</Link>
+                                    {' '}para autocompletar y ver tus pedidos.
+                                </p>
+                            )}
                             <div className="mt-5 grid gap-4 sm:grid-cols-2">
                                 <div className="sm:col-span-2">
                                     <label htmlFor="name" className="mb-1.5 block text-sm font-medium">Nombre completo *</label>

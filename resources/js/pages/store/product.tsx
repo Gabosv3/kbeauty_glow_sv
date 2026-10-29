@@ -5,8 +5,8 @@ import { ProductCard } from '@/components/store/product-card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { useCart } from '@/contexts/cart-context';
+import { useStore } from '@/lib/store-config';
 
-const WA_NUMBER = '50360330849';
 
 interface Product {
     id: number;
@@ -26,15 +26,16 @@ interface Props {
     relatedProducts: Product[];
 }
 
-function buildWhatsAppUrl(productName: string, price: number, qty: number): string {
+function buildWhatsAppUrl(whatsapp: string, productName: string, price: number, qty: number): string {
     const total = (price * qty).toFixed(2);
     const msg =
         `¡Hola! Me interesa pedir lo siguiente:\n\n*${productName}*\nPrecio unitario: $${price.toFixed(2)}\nCantidad: ${qty}\nTotal: $${total}\n\n¿Está disponible? 😊`;
 
-    return `https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
 }
 
 export default function StoreProduct({ product, relatedProducts }: Readonly<Props>) {
+    const STORE = useStore();
     const [quantity, setQuantity] = useState(1);
     const [added, setAdded] = useState(false);
     const { addItem, setCartOpen } = useCart();
@@ -222,7 +223,7 @@ return '¡Agregado! ✓';
                                         Ver carrito
                                     </button>
                                     <a
-                                        href={buildWhatsAppUrl(product.name, product.price, quantity)}
+                                        href={buildWhatsAppUrl(STORE.whatsapp, product.name, product.price, quantity)}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-[#25D366] py-2.5 text-sm font-medium text-white hover:bg-[#1ebe5d]"

@@ -1,12 +1,14 @@
 import { Head } from '@inertiajs/react';
 import { Clock, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
-import { STORE, whatsappUrl } from '@/lib/store-config';
+import { useStore } from '@/lib/store-config';
 
 const inputClass =
     'w-full rounded-2xl border border-brand-rose bg-white px-4 py-3 text-sm text-brand-text placeholder:text-brand-text/40 focus:border-brand-gold focus:outline-2 focus:outline-brand-gold/30';
 
 export default function Contact() {
+    const STORE = useStore();
+    const { whatsappUrl } = STORE;
     const [form, setForm] = useState({ name: '', message: '' });
 
     const set = (key: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>

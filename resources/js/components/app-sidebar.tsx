@@ -1,5 +1,5 @@
 import { Link } from '@inertiajs/react';
-import { Award, LayoutGrid, Package, Percent, ShoppingBag, ShoppingCart, Tag, Ticket, Truck, Users } from 'lucide-react';
+import { Award, FileText, LayoutGrid, Package, Percent, ShoppingBag, Settings, ShoppingCart, Star, Tag, Ticket, Truck, UserRound, Users } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import AppearanceToggleTab from '@/components/appearance-tabs';
 import { NavAdmin } from '@/components/nav-admin';
@@ -67,6 +67,16 @@ export function AppSidebar() {
             icon: ShoppingBag,
         },
         {
+            title: 'Cotizaciones',
+            href: admin.quotes.index,
+            icon: FileText,
+        },
+        {
+            title: 'Clientes',
+            href: admin.customers.index,
+            icon: UserRound,
+        },
+        {
             title: 'Cupones',
             href: admin.coupons.index,
             icon: Ticket,
@@ -75,6 +85,16 @@ export function AppSidebar() {
             title: 'Descuentos',
             href: admin.discounts.index,
             icon: Percent,
+        },
+        {
+            title: 'Destacados',
+            href: admin.featured.index,
+            icon: Star,
+        },
+        {
+            title: 'Ajustes',
+            href: admin.settings.edit,
+            icon: Settings,
         },
     ];
 

@@ -1,19 +1,28 @@
-export const STORE = {
-    name: 'KBeauty Glow SV',
-    handle: 'kbeauty_glow',
-    whatsapp: '50360330849',
-    city: 'San Salvador, El Salvador',
-    email: 'hola@kbeauty.com',
-    freeShippingFrom: 50,
-    socials: {
-        instagram: 'https://instagram.com/kbeauty_glow_sv',
-        tiktok: 'https://tiktok.com/@kbeauty_glow_sv',
-        facebook: 'https://facebook.com/kbeauty.glow.sv',
-    },
-} as const;
+import { usePage } from '@inertiajs/react';
 
-export function whatsappUrl(message: string): string {
-    return `https://wa.me/${STORE.whatsapp}?text=${encodeURIComponent(message)}`;
+export interface StoreInfo {
+    name: string;
+    handle: string;
+    whatsapp: string;
+    email: string;
+    city: string;
+    free_shipping_from: number;
+    shipping_cost: number;
+    instagram: string;
+    tiktok: string;
+    facebook: string;
+}
+
+/** Datos de la tienda: vienen del servidor (Admin > Ajustes), no están fijos en el código. */
+export function useStore() {
+    const store = usePage<{ store: StoreInfo }>().props.store;
+
+    return {
+        ...store,
+        freeShippingFrom: store.free_shipping_from,
+        socials: { instagram: store.instagram, tiktok: store.tiktok, facebook: store.facebook },
+        whatsappUrl: (message: string) => `https://wa.me/${store.whatsapp}?text=${encodeURIComponent(message)}`,
+    };
 }
 
 /** Emoji decorativo según el nombre de la categoría (las categorías vienen de la base de datos). */

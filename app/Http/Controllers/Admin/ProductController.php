@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\XlsxWriter;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Response as HttpResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -35,6 +37,48 @@ class ProductController extends AdminController
             'products' => $products,
             'categories' => $categories,
             'brands' => $brands,
+        ]);
+    }
+
+    /** Inventario valorizado: lo invertido es costo x stock actual. */
+    public function export(XlsxWriter $xlsx): HttpResponse
+    {
+        $products = Product::where('team_id', $this->currentTeam()->id)
+            ->with(['category:id,name', 'brand:id,name'])
+            ->orderBy('name')
+            ->get();
+
+        $rows = $products->map(fn (Product $p) => [
+            $p->sku,
+            $p->name,
+            $p->category?->name,
+            $p->brand?->name,
+            $p->active ? 'Activo' : 'Inactivo',
+            (int) $p->stock,
+            XlsxWriter::money((float) $p->cost_price),
+            XlsxWriter::money((float) $p->sale_price),
+            XlsxWriter::money((float) $p->cost_price * $p->stock),
+            XlsxWriter::money((float) $p->sale_price * $p->stock),
+            XlsxWriter::money(((float) $p->sale_price - (float) $p->cost_price) * $p->stock),
+        ])->all();
+
+        $invested = $products->sum(fn (Product $p) => (float) $p->cost_price * $p->stock);
+        $retail = $products->sum(fn (Product $p) => (float) $p->sale_price * $p->stock);
+
+        $rows[] = [];
+        $rows[] = ['', 'TOTAL', '', '', '', (int) $products->sum('stock'), '', '',
+            XlsxWriter::money($invested, true), XlsxWriter::money($retail, true), XlsxWriter::money($retail - $invested, true)];
+
+        $content = $xlsx->build(
+            'Inventario',
+            ['SKU', 'Producto', 'Categoría', 'Marca', 'Estado', 'Stock', 'Costo unitario', 'Precio de venta', 'Invertido (costo x stock)', 'Valor a precio de venta', 'Ganancia potencial'],
+            $rows,
+            [12, 44, 22, 16, 10, 8, 14, 15, 24, 22, 18],
+        );
+
+        return response($content, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="inventario-'.now()->format('Y-m-d').'.xlsx"',
         ]);
     }
 
