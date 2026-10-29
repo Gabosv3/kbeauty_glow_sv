@@ -106,7 +106,7 @@ export function QuoteDocument({ quote, store }: Readonly<{ quote: Quote; store: 
             )}
 
             <footer className="mt-10 text-center text-xs text-neutral-400">
-                Precios sujetos a disponibilidad. Gracias por tu preferencia 🌸
+                Precios sujetos a disponibilidad. Gracias por tu preferencia.
             </footer>
         </article>
     );

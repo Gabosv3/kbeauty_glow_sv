@@ -1,5 +1,5 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { ArrowLeft, Check, Loader2, MessageCircle, Package, Tag, Truck } from 'lucide-react';
+import { ArrowLeft, Check, Loader2, MessageCircle, Package, ShoppingBag, Tag, Truck } from 'lucide-react';
 import { useState } from 'react';
 import { useCart } from '@/contexts/cart-context';
 import { useStore } from '@/lib/store-config';
@@ -70,7 +70,9 @@ export default function Checkout({ departments, freeShippingFrom, prefill }: Rea
             <>
                 <Head title="Finalizar compra — KBeauty Glow SV" />
                 <div className="mx-auto max-w-lg px-4 py-24 text-center">
-                    <p className="text-6xl">🛍️</p>
+                    <span className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-brand-blush text-brand-mauve">
+                        <ShoppingBag className="h-9 w-9" strokeWidth={1.25} />
+                    </span>
                     <h1 className="font-display mt-4 text-3xl font-semibold text-brand-text">Tu carrito está vacío</h1>
                     <p className="mt-2 text-brand-text/60">Agrega algunos productos para continuar con tu compra.</p>
                     <Link href="/store/products" className="mt-6 inline-flex rounded-full bg-brand-text px-7 py-3 text-sm font-semibold text-white hover:bg-brand-gold-dark">

@@ -20,7 +20,7 @@ function buildCartWhatsAppUrl(items: { name: string; price: number; quantity: nu
         .map((it, i) => `${i + 1}. *${it.name}* — Cant: ${it.quantity} — $${it.price.toFixed(2)} c/u — Subtotal: $${(it.price * it.quantity).toFixed(2)}`)
         .join('\n');
     const total = items.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2);
-    const msg = `¡Hola! Me gustaría cotizar los siguientes productos:\n\n${lines}\n\n*Total: $${total}*\n\n¿Están disponibles? 😊`;
+    const msg = `¡Hola! Me gustaría cotizar los siguientes productos:\n\n${lines}\n\n*Total: $${total}*\n\n¿Están disponibles?`;
 
     return whatsappUrl(msg);
 }
@@ -173,7 +173,7 @@ function CartDrawer() {
                         <div>
                             <p className="text-xs font-medium text-brand-text">
                                 {totalPrice >= STORE.freeShippingFrom
-                                    ? '🎉 ¡Tienes envío gratis!'
+                                    ? 'Tu pedido tiene envío gratis'
                                     : `Te faltan $${(STORE.freeShippingFrom - totalPrice).toFixed(2)} para envío gratis`}
                             </p>
                             <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-brand-rose/60">
@@ -242,8 +242,8 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
         <div className="flex min-h-screen flex-col bg-brand-cream" style={{ color: '#3D3656' }}>
             <CartDrawer />
 
-            <div className="bg-brand-text py-2 text-center text-xs font-medium tracking-wide text-white">
-                🌸 Envío gratis en compras desde ${STORE.freeShippingFrom} &nbsp;·&nbsp; K-Beauty 100% auténtico
+            <div className="bg-brand-text py-2 text-center text-[11px] font-medium uppercase tracking-[0.18em] text-white/90">
+                Envío gratis en compras desde ${STORE.freeShippingFrom} &nbsp;·&nbsp; K-Beauty 100% auténtico
             </div>
 
             <header className="sticky top-0 z-30 border-b border-white/60 bg-white/70 backdrop-blur-xl supports-[backdrop-filter]:bg-white/60">
@@ -381,7 +381,7 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
                                     { label: 'Instagram', href: STORE.socials.instagram, Icon: Instagram },
                                     { label: 'TikTok', href: STORE.socials.tiktok, Icon: Music2 },
                                     { label: 'Facebook', href: STORE.socials.facebook, Icon: Facebook },
-                                    { label: 'WhatsApp', href: STORE.whatsappUrl('¡Hola! Quisiera más información 🌸'), Icon: MessageCircle },
+                                    { label: 'WhatsApp', href: STORE.whatsappUrl('¡Hola! Quisiera más información.'), Icon: MessageCircle },
                                 ].map(({ label, href, Icon }) => (
                                     <a
                                         key={label}
@@ -444,7 +444,7 @@ function StoreLayoutInner({ children }: Readonly<{ children: React.ReactNode }>)
             </footer>
 
             <a
-                href={STORE.whatsappUrl('¡Hola! Estoy en su tienda y me gustaría obtener más información. 😊')}
+                href={STORE.whatsappUrl('¡Hola! Estoy en su tienda y me gustaría obtener más información.')}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Contactar por WhatsApp"

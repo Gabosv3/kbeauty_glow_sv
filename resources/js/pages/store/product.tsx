@@ -29,7 +29,7 @@ interface Props {
 function buildWhatsAppUrl(whatsapp: string, productName: string, price: number, qty: number): string {
     const total = (price * qty).toFixed(2);
     const msg =
-        `¡Hola! Me interesa pedir lo siguiente:\n\n*${productName}*\nPrecio unitario: $${price.toFixed(2)}\nCantidad: ${qty}\nTotal: $${total}\n\n¿Está disponible? 😊`;
+        `¡Hola! Me interesa pedir lo siguiente:\n\n*${productName}*\nPrecio unitario: $${price.toFixed(2)}\nCantidad: ${qty}\nTotal: $${total}\n\n¿Está disponible?`;
 
     return `https://wa.me/${whatsapp}?text=${encodeURIComponent(msg)}`;
 }
@@ -195,7 +195,7 @@ export default function StoreProduct({ product, relatedProducts }: Readonly<Prop
                                     <ShoppingCart className="mr-2 h-4 w-4" />
                                     {(() => {
                                         if (added) {
-return '¡Agregado! ✓';
+return 'Agregado al carrito';
 }
 
                                         return product.in_stock ? 'Agregar al carrito' : 'Agotado';

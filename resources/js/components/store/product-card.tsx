@@ -49,7 +49,7 @@ export function ProductCard({ product }: Readonly<{ product: StoreProduct }>) {
                         </div>
                     )}
                     {discount !== null && (
-                        <span className="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-0.5 text-xs font-semibold text-white shadow-sm">
+                        <span className="absolute left-3 top-3 rounded-full bg-brand-mauve px-2.5 py-0.5 text-[11px] font-semibold tracking-wide text-white shadow-sm">
                             -{discount}%
                         </span>
                     )}

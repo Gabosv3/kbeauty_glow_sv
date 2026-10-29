@@ -1,5 +1,5 @@
 import { Head, Link } from '@inertiajs/react';
-import { CheckCircle2, MessageCircle } from 'lucide-react';
+import { CheckCircle2, MapPin, MessageCircle } from 'lucide-react';
 import { useEffect } from 'react';
 import { useCart } from '@/contexts/cart-context';
 
@@ -29,7 +29,7 @@ function buildMessage(o: Order): string {
         .filter(Boolean)
         .join('\n');
 
-    return `¡Hola! Acabo de hacer el pedido *${o.reference}* en la tienda 🌸\n\n${lines}\n\n${extras}\n*Total: ${money(o.total)}*\n\n📍 ${o.address}, ${o.municipality}, ${o.department}\n👤 ${o.customer_name}\n\n¿Cómo coordinamos el pago?`;
+    return `¡Hola! Acabo de hacer el pedido *${o.reference}* en la tienda.\n\n${lines}\n\n${extras}\n*Total: ${money(o.total)}*\n\nDirección: ${o.address}, ${o.municipality}, ${o.department}\nNombre: ${o.customer_name}\n\n¿Cómo coordinamos el pago?`;
 }
 
 export default function OrderConfirmation({ order, whatsapp }: Readonly<{ order: Order; whatsapp: string }>) {
@@ -91,7 +91,7 @@ export default function OrderConfirmation({ order, whatsapp }: Readonly<{ order:
                         <div className="flex justify-between pt-1 text-base font-semibold"><dt>Total</dt><dd>{money(order.total)}</dd></div>
                     </dl>
                     <p className="mt-4 rounded-2xl bg-brand-cream-alt p-3 text-xs text-brand-text/70">
-                        📍 {order.address}, {order.municipality}, {order.department}
+                        <MapPin className="mr-1.5 inline h-3.5 w-3.5 -translate-y-px text-brand-gold" />{order.address}, {order.municipality}, {order.department}
                     </p>
                 </div>
 

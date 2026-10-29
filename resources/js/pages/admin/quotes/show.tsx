@@ -20,7 +20,7 @@ function whatsappText(q: Quote, store: QuoteStore): string {
     const lines = q.items.map((i, n) => `${n + 1}. ${i.name} x${i.quantity} — ${money(i.subtotal)}`).join('\n');
     const until = q.valid_until ? `\nVálida hasta: ${q.valid_until}` : '';
 
-    return `¡Hola ${q.customer_name}! Te comparto tu cotización ${q.reference} de ${store.name}:\n\n${lines}\n\n*Total: ${money(q.total)}*${until}\n\n¿Te gustaría confirmar tu pedido? 🌸`;
+    return `¡Hola ${q.customer_name}! Te comparto tu cotización ${q.reference} de ${store.name}:\n\n${lines}\n\n*Total: ${money(q.total)}*${until}\n\n¿Te gustaría confirmar tu pedido?`;
 }
 
 export default function QuoteShow({ quote, store }: Readonly<{ quote: Quote; store: QuoteStore }>) {

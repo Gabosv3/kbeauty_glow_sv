@@ -288,7 +288,9 @@ export default function StoreProducts({ products, categories, brands, priceCeili
 
                     {products.length === 0 ? (
                         <div className="rounded-3xl border border-dashed border-brand-wood bg-white px-6 py-20 text-center">
-                            <p className="text-5xl">🔍</p>
+                            <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-brand-blush text-brand-mauve">
+                                <Search className="h-7 w-7" strokeWidth={1.25} />
+                            </span>
                             <h2 className="font-display mt-4 text-2xl font-semibold text-brand-text">Nada por aquí… todavía</h2>
                             <p className="mt-1 text-sm text-brand-text/60">Prueba con otros filtros o escríbenos y lo conseguimos para ti.</p>
                             <button type="button" onClick={() => {

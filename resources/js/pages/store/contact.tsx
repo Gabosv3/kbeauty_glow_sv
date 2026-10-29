@@ -22,7 +22,7 @@ export default function Contact() {
     }
 
     const info = [
-        { icon: MessageCircle, label: 'WhatsApp', value: `+${STORE.whatsapp}`, href: whatsappUrl('¡Hola! 🌸') },
+        { icon: MessageCircle, label: 'WhatsApp', value: `+${STORE.whatsapp}`, href: whatsappUrl('¡Hola! Quisiera más información.') },
         { icon: Mail, label: 'Correo', value: STORE.email, href: `mailto:${STORE.email}` },
         { icon: MapPin, label: 'Ubicación', value: STORE.city },
         { icon: Clock, label: 'Horario', value: 'Lun a Sáb · 9:00 a 18:00' },
