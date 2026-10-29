@@ -3,6 +3,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { STATUS_LABEL, money } from '@/components/admin/quote-document';
 import type { Quote } from '@/components/admin/quote-document';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -65,41 +66,42 @@ export default function QuotesIndex({ quotes, products }: Readonly<{ quotes: Row
                     </Button>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Referencia</th>
-                                <th className="px-4 py-3 text-left font-medium">Cliente</th>
-                                <th className="px-4 py-3 text-left font-medium">Fecha</th>
-                                <th className="px-4 py-3 text-center font-medium">Productos</th>
-                                <th className="px-4 py-3 text-right font-medium">Total</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {quotes.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">Aún no hay cotizaciones.</td>
-                                </tr>
-                            )}
-                            {quotes.map((q) => (
-                                <tr key={q.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-mono font-semibold">
-                                        <Link href={admin.quotes.show(q.id)} className="hover:underline">{q.reference}</Link>
-                                    </td>
-                                    <td className="px-4 py-3">{q.customer_name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{new Date(q.created_at).toLocaleDateString('es-SV', { dateStyle: 'medium' })}</td>
-                                    <td className="px-4 py-3 text-center">{q.items_count}</td>
-                                    <td className="px-4 py-3 text-right font-mono">{money(q.total)}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <Badge variant={q.status === 'accepted' ? 'default' : 'secondary'}>{STATUS_LABEL[q.status]}</Badge>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    data={quotes}
+                    rowKey={(q) => q.id}
+                    searchPlaceholder="Buscar cotización..."
+                    emptyMessage="Aún no hay cotizaciones."
+                    columns={[
+                        {
+                            key: 'reference',
+                            header: 'Referencia',
+                            value: (q) => q.reference,
+                            searchable: true,
+                            className: 'font-mono font-semibold',
+                            cell: (q) => (
+                                <Link href={admin.quotes.show(q.id)} className="hover:underline">{q.reference}</Link>
+                            ),
+                        },
+                        { key: 'customer', header: 'Cliente', value: (q) => q.customer_name, searchable: true },
+                        {
+                            key: 'date',
+                            header: 'Fecha',
+                            value: (q) => new Date(q.created_at).getTime(),
+                            className: 'text-muted-foreground',
+                            cell: (q) => new Date(q.created_at).toLocaleDateString('es-SV', { dateStyle: 'medium' }),
+                        },
+                        { key: 'items', header: 'Productos', align: 'center', value: (q) => q.items_count },
+                        { key: 'total', header: 'Total', align: 'right', value: (q) => Number(q.total), className: 'font-mono', cell: (q) => money(q.total) },
+                        {
+                            key: 'status',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (q) => STATUS_LABEL[q.status],
+                            searchable: true,
+                            cell: (q) => <Badge variant={q.status === 'accepted' ? 'default' : 'secondary'}>{STATUS_LABEL[q.status]}</Badge>,
+                        },
+                    ]}
+                />
             </div>
 
             <Dialog open={open} onOpenChange={setOpen}>

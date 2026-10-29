@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Store\Account;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TwoFactorChallengeController;
 use App\Models\Customer;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,13 +29,21 @@ class AuthController extends Controller
 
         if (! Auth::guard('customer')->attempt($credentials, $remember)) {
             // Los usuarios del panel entran a la tienda con las mismas credenciales.
-            if (! Auth::guard('web')->attempt($credentials, $remember)) {
+            $web = Auth::guard('web');
+            $user = $web->getProvider()->retrieveByCredentials($credentials);
+
+            if (! $user || ! $web->getProvider()->validateCredentials($user, $credentials)) {
                 return back()->withErrors([
                     'email' => 'El correo o la contraseña no coinciden.',
                 ])->onlyInput('email');
             }
 
-            Auth::guard('customer')->login(Customer::forPanelUser(Auth::guard('web')->user()), $remember);
+            if ($user->hasTwoFactorEnabled()) {
+                return TwoFactorChallengeController::begin($request, $user, $remember, 'store');
+            }
+
+            $web->login($user, $remember);
+            Auth::guard('customer')->login(Customer::forPanelUser($user), $remember);
         }
 
         $request->session()->regenerate();

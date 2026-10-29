@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
-import { Pencil, Plus, RotateCcw, Search, Trash2 } from 'lucide-react';
+import { Pencil, Plus, RotateCcw, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +33,6 @@ const empty: UserForm = { name: '', email: '', password: '', role: 'member' };
 export default function UsersIndex({ members, currentUserId }: Readonly<Props>) {
     const [open, setOpen] = useState(false);
     const [editing, setEditing] = useState<Member | null>(null);
-    const [search, setSearch] = useState('');
     const [showDeleted, setShowDeleted] = useState(false);
     const form = useForm<UserForm>(empty);
 
@@ -71,10 +71,8 @@ export default function UsersIndex({ members, currentUserId }: Readonly<Props>) 
     }
 
     const visible = useMemo(() => {
-        const needle = search.trim().toLowerCase();
-
-        return members.filter((m) => (showDeleted ? m.deleted_at !== null : m.deleted_at === null) && (!needle || `${m.name} ${m.email}`.toLowerCase().includes(needle)));
-    }, [members, search, showDeleted]);
+        return members.filter((m) => (showDeleted ? m.deleted_at !== null : m.deleted_at === null));
+    }, [members, showDeleted]);
 
     const deletedCount = members.filter((m) => m.deleted_at).length;
     const error = (key: keyof UserForm) => form.errors[key] && <p className="text-sm text-destructive">{form.errors[key]}</p>;
@@ -91,86 +89,78 @@ export default function UsersIndex({ members, currentUserId }: Readonly<Props>) 
                     </Button>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
-                    <div className="relative">
-                        <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
-                        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Buscar por nombre o correo…" className="w-72 pl-9" />
-                    </div>
-                    <div className="inline-flex rounded-lg border p-0.5 text-sm">
-                        <button type="button" onClick={() => setShowDeleted(false)} className={`rounded-md px-3 py-1.5 ${!showDeleted ? 'bg-accent font-medium' : 'text-muted-foreground'}`}>
-                            Activos
-                        </button>
-                        <button type="button" onClick={() => setShowDeleted(true)} className={`rounded-md px-3 py-1.5 ${showDeleted ? 'bg-accent font-medium' : 'text-muted-foreground'}`}>
-                            Eliminados{deletedCount > 0 && ` (${deletedCount})`}
-                        </button>
-                    </div>
-                </div>
-
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Usuario</th>
-                                <th className="px-4 py-3 text-left font-medium">Rol</th>
-                                <th className="px-4 py-3 text-left font-medium">Creado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {visible.length === 0 && (
-                                <tr>
-                                    <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
-                                        {showDeleted ? 'No hay usuarios eliminados.' : 'No se encontraron usuarios.'}
-                                    </td>
-                                </tr>
+                <DataTable
+                    data={visible}
+                    rowKey={(m) => m.id}
+                    searchPlaceholder="Buscar por nombre o correo…"
+                    extraSearch={(m) => [m.email]}
+                    emptyMessage={showDeleted ? 'No hay usuarios eliminados.' : 'No se encontraron usuarios.'}
+                    toolbar={
+                        <div className="inline-flex rounded-lg border p-0.5 text-sm">
+                            <button type="button" onClick={() => setShowDeleted(false)} className={`rounded-md px-3 py-1.5 ${!showDeleted ? 'bg-accent font-medium' : 'text-muted-foreground'}`}>
+                                Activos
+                            </button>
+                            <button type="button" onClick={() => setShowDeleted(true)} className={`rounded-md px-3 py-1.5 ${showDeleted ? 'bg-accent font-medium' : 'text-muted-foreground'}`}>
+                                Eliminados{deletedCount > 0 && ` (${deletedCount})`}
+                            </button>
+                        </div>
+                    }
+                    columns={[
+                        {
+                            key: 'name',
+                            header: 'Usuario',
+                            value: (m) => m.name,
+                            searchable: true,
+                            cell: (m) => (
+                                <div className="flex items-center gap-3">
+                                    <Avatar className="size-9">
+                                        <AvatarImage src={m.avatar ?? undefined} alt={m.name} />
+                                        <AvatarFallback>{m.name.charAt(0).toUpperCase()}</AvatarFallback>
+                                    </Avatar>
+                                    <div className="min-w-0">
+                                        <p className="truncate font-medium">
+                                            {m.name} {m.id === currentUserId && <span className="text-xs text-muted-foreground">(tú)</span>}
+                                        </p>
+                                        <p className="truncate text-xs text-muted-foreground">{m.email}</p>
+                                    </div>
+                                </div>
+                            ),
+                        },
+                        {
+                            key: 'role',
+                            header: 'Rol',
+                            value: (m) => roleLabels[m.role] ?? m.role,
+                            cell: (m) => <Badge variant={m.role === 'member' ? 'secondary' : 'default'}>{roleLabels[m.role] ?? m.role}</Badge>,
+                        },
+                        {
+                            key: 'created',
+                            header: 'Creado',
+                            value: (m) => (m.created_at ? new Date(m.created_at).getTime() : null),
+                            className: 'text-muted-foreground',
+                            cell: (m) => (m.created_at ? new Date(m.created_at).toLocaleDateString('es-SV', { dateStyle: 'medium' }) : '—'),
+                        },
+                    ]}
+                    actions={(m) => (
+                        <div className="flex justify-end gap-1">
+                            {m.deleted_at ? (
+                                <Button size="sm" variant="outline" onClick={() => router.post(admin.users.restore(m.id), {}, { preserveScroll: true })}>
+                                    <RotateCcw className="mr-2 size-4" /> Restaurar
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button size="icon" variant="ghost" onClick={() => openEdit(m)} aria-label={`Editar ${m.name}`}>
+                                        <Pencil className="size-4" />
+                                    </Button>
+                                    {m.role !== 'owner' && m.id !== currentUserId && (
+                                        <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(m)} aria-label={`Eliminar ${m.name}`}>
+                                            <Trash2 className="size-4" />
+                                        </Button>
+                                    )}
+                                </>
                             )}
-                            {visible.map((m) => (
-                                <tr key={m.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3">
-                                        <div className="flex items-center gap-3">
-                                            <Avatar className="size-9">
-                                                <AvatarImage src={m.avatar ?? undefined} alt={m.name} />
-                                                <AvatarFallback>{m.name.charAt(0).toUpperCase()}</AvatarFallback>
-                                            </Avatar>
-                                            <div className="min-w-0">
-                                                <p className="truncate font-medium">
-                                                    {m.name} {m.id === currentUserId && <span className="text-xs text-muted-foreground">(tú)</span>}
-                                                </p>
-                                                <p className="truncate text-xs text-muted-foreground">{m.email}</p>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <Badge variant={m.role === 'member' ? 'secondary' : 'default'}>{roleLabels[m.role] ?? m.role}</Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-muted-foreground">
-                                        {m.created_at ? new Date(m.created_at).toLocaleDateString('es-SV', { dateStyle: 'medium' }) : '—'}
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-1">
-                                            {m.deleted_at ? (
-                                                <Button size="sm" variant="outline" onClick={() => router.post(admin.users.restore(m.id), {}, { preserveScroll: true })}>
-                                                    <RotateCcw className="mr-2 size-4" /> Restaurar
-                                                </Button>
-                                            ) : (
-                                                <>
-                                                    <Button size="icon" variant="ghost" onClick={() => openEdit(m)} aria-label={`Editar ${m.name}`}>
-                                                        <Pencil className="size-4" />
-                                                    </Button>
-                                                    {m.role !== 'owner' && m.id !== currentUserId && (
-                                                        <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(m)} aria-label={`Eliminar ${m.name}`}>
-                                                            <Trash2 className="size-4" />
-                                                        </Button>
-                                                    )}
-                                                </>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                        </div>
+                    )}
+                />
             </div>
 
             <Dialog open={open} onOpenChange={setOpen}>

@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -125,64 +126,69 @@ export default function CouponsIndex({ coupons }: Readonly<{ coupons: Coupon[] }
                     </Button>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Código</th>
-                                <th className="px-4 py-3 text-left font-medium">Beneficio</th>
-                                <th className="px-4 py-3 text-left font-medium">Vigencia</th>
-                                <th className="px-4 py-3 text-center font-medium">Usos</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {coupons.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                                        Aún no hay cupones. Crea el primero.
-                                    </td>
-                                </tr>
-                            )}
-                            {coupons.map((c) => {
+                <DataTable
+                    data={coupons}
+                    rowKey={(c) => c.id}
+                    searchPlaceholder="Buscar cupón..."
+                    emptyMessage="Aún no hay cupones. Crea el primero."
+                    columns={[
+                        { key: 'code', header: 'Código', value: (c) => c.code, searchable: true, className: 'font-mono font-semibold' },
+                        {
+                            key: 'benefit',
+                            header: 'Beneficio',
+                            value: (c) => Number(c.value),
+                            cell: (c) => (
+                                <>
+                                    {describe(c)}
+                                    {Number(c.min_order) > 0 && (
+                                        <span className="block text-xs text-muted-foreground">Compra mínima ${Number(c.min_order).toFixed(2)}</span>
+                                    )}
+                                </>
+                            ),
+                        },
+                        {
+                            key: 'validity',
+                            header: 'Vigencia',
+                            value: (c) => c.ends_at ?? c.starts_at,
+                            className: 'text-muted-foreground',
+                            cell: (c) => (c.starts_at || c.ends_at ? `${day(c.starts_at) || '—'} → ${day(c.ends_at) || '—'}` : 'Sin límite'),
+                        },
+                        {
+                            key: 'uses',
+                            header: 'Usos',
+                            align: 'center',
+                            value: (c) => c.used_count,
+                            cell: (c) => (
+                                <>
+                                    {c.used_count}
+                                    {c.max_uses !== null && <span className="text-muted-foreground"> / {c.max_uses}</span>}
+                                </>
+                            ),
+                        },
+                        {
+                            key: 'status',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (c) => statusOf(c).label,
+                            searchable: true,
+                            cell: (c) => {
                                 const status = statusOf(c);
 
-                                return (
-                                    <tr key={c.id} className="hover:bg-muted/30">
-                                        <td className="px-4 py-3 font-mono font-semibold">{c.code}</td>
-                                        <td className="px-4 py-3">
-                                            {describe(c)}
-                                            {Number(c.min_order) > 0 && (
-                                                <span className="block text-xs text-muted-foreground">Compra mínima ${Number(c.min_order).toFixed(2)}</span>
-                                            )}
-                                        </td>
-                                        <td className="px-4 py-3 text-muted-foreground">
-                                            {c.starts_at || c.ends_at ? `${day(c.starts_at) || '—'} → ${day(c.ends_at) || '—'}` : 'Sin límite'}
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            {c.used_count}
-                                            {c.max_uses !== null && <span className="text-muted-foreground"> / {c.max_uses}</span>}
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <Badge variant={status.active ? 'default' : 'secondary'}>{status.label}</Badge>
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button size="icon" variant="ghost" onClick={() => openEdit(c)} aria-label={`Editar ${c.code}`}>
-                                                    <Pencil className="size-4" />
-                                                </Button>
-                                                <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(c)} aria-label={`Eliminar ${c.code}`}>
-                                                    <Trash2 className="size-4" />
-                                                </Button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                                return <Badge variant={status.active ? 'default' : 'secondary'}>{status.label}</Badge>;
+                            },
+                        },
+                    ]}
+                    actions={(c) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => openEdit(c)} aria-label={`Editar ${c.code}`}>
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(c)} aria-label={`Eliminar ${c.code}`}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </div>
+                    )}
+                />
             </div>
 
             <Dialog open={open} onOpenChange={setOpen}>

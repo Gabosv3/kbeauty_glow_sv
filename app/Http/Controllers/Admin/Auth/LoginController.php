@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\TwoFactorChallengeController;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -23,11 +24,21 @@ class LoginController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        if (! Auth::attempt($credentials, $request->boolean('remember'))) {
+        $remember = $request->boolean('remember');
+        $guard = Auth::guard('web');
+        $user = $guard->getProvider()->retrieveByCredentials($credentials);
+
+        if (! $user || ! $guard->getProvider()->validateCredentials($user, $credentials)) {
             return back()->withErrors([
                 'email' => 'Las credenciales no coinciden con nuestros registros.',
             ])->onlyInput('email');
         }
+
+        if ($user->hasTwoFactorEnabled()) {
+            return TwoFactorChallengeController::begin($request, $user, $remember, 'admin');
+        }
+
+        $guard->login($user, $remember);
 
         $request->session()->regenerate();
 

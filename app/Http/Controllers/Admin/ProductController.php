@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
+use App\Services\UrbbyExport;
 use App\Services\XlsxWriter;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response as HttpResponse;
@@ -79,6 +80,21 @@ class ProductController extends AdminController
         return response($content, 200, [
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => 'attachment; filename="inventario-'.now()->format('Y-m-d').'.xlsx"',
+        ]);
+    }
+
+    /** Productos activos en el formato de la plantilla de importación de Urbby. */
+    public function exportUrbby(UrbbyExport $urbby): HttpResponse
+    {
+        $products = Product::where('team_id', $this->currentTeam()->id)
+            ->where('active', true)
+            ->with(['category:id,name', 'brand:id,name'])
+            ->orderBy('name')
+            ->get();
+
+        return response($urbby->build($products), 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => 'attachment; filename="productos-urbby-'.now()->format('Y-m-d').'.xlsx"',
         ]);
     }
 

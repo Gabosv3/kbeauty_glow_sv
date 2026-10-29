@@ -2,6 +2,7 @@ import { Link, router, useForm } from '@inertiajs/react';
 import { Head } from '@inertiajs/react';
 import { Eye, Plus } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -108,71 +109,80 @@ return;
                     </Button>
                 </div>
 
-                <div className="rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Referencia</th>
-                                <th className="px-4 py-3 text-left font-medium">Fecha</th>
-                                <th className="px-4 py-3 text-left font-medium">Cliente</th>
-                                <th className="px-4 py-3 text-left font-medium">Pago</th>
-                                <th className="px-4 py-3 text-left font-medium">Vendedor</th>
-                                <th className="px-4 py-3 text-right font-medium">Total</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {sales.map((s) => (
-                                <tr key={s.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-mono text-xs">
-                                        {s.reference}
-                                        {s.channel === 'web' && <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-primary">WEB</span>}
-                                    </td>
-                                    <td className="px-4 py-3 text-muted-foreground">
-                                        <div>{new Date(s.created_at).toLocaleDateString('es')}</div>
-                                        <div className="text-xs">{new Date(s.created_at).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</div>
-                                    </td>
-                                    <td className="px-4 py-3">{s.customer_name ?? '—'}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{paymentLabels[s.payment_method] ?? s.payment_method}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{s.user?.name ?? '—'}</td>
-                                    <td className="px-4 py-3 text-right font-medium">${s.total}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[s.status]}`}>
-                                            {statusLabels[s.status]}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" asChild>
-                                                <Link href={admin.sales.show(s.id)}>
-                                                    <Eye className="size-4" />
-                                                </Link>
-                                            </Button>
-                                            {s.status === 'pending' && (
-                                                <Button size="sm" variant="ghost" onClick={() => router.post(admin.sales.complete(s.id), {}, { preserveScroll: true })}>
-                                                    Confirmar
-                                                </Button>
-                                            )}
-                                            {(s.status === 'completed' || s.status === 'pending') && (
-                                                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelSale(s)}>
-                                                    Cancelar
-                                                </Button>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {sales.length === 0 && (
-                                <tr>
-                                        <td colSpan={8} className="px-4 py-10 text-center text-muted-foreground">
-                                        No hay ventas registradas.
-                                    </td>
-                                </tr>
+                <DataTable
+                    data={sales}
+                    rowKey={(s) => s.id}
+                    searchPlaceholder="Buscar venta..."
+                    emptyMessage="No hay ventas registradas."
+                    columns={[
+                        {
+                            key: 'reference',
+                            header: 'Referencia',
+                            value: (s) => s.reference,
+                            searchable: true,
+                            className: 'font-mono text-xs',
+                            cell: (s) => (
+                                <>
+                                    {s.reference}
+                                    {s.channel === 'web' && <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 font-sans text-[10px] font-semibold text-primary">WEB</span>}
+                                </>
+                            ),
+                        },
+                        {
+                            key: 'date',
+                            header: 'Fecha',
+                            value: (s) => new Date(s.created_at).getTime(),
+                            className: 'text-muted-foreground',
+                            cell: (s) => (
+                                <>
+                                    <div>{new Date(s.created_at).toLocaleDateString('es')}</div>
+                                    <div className="text-xs">{new Date(s.created_at).toLocaleTimeString('es', { hour: '2-digit', minute: '2-digit' })}</div>
+                                </>
+                            ),
+                        },
+                        { key: 'customer', header: 'Cliente', value: (s) => s.customer_name, searchable: true, cell: (s) => s.customer_name ?? '—' },
+                        {
+                            key: 'payment',
+                            header: 'Pago',
+                            value: (s) => paymentLabels[s.payment_method] ?? s.payment_method,
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                        },
+                        { key: 'user', header: 'Vendedor', value: (s) => s.user?.name, searchable: true, className: 'text-muted-foreground', cell: (s) => s.user?.name ?? '—' },
+                        { key: 'total', header: 'Total', align: 'right', value: (s) => Number(s.total), className: 'font-medium', cell: (s) => `$${s.total}` },
+                        {
+                            key: 'status',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (s) => statusLabels[s.status],
+                            searchable: true,
+                            cell: (s) => (
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[s.status]}`}>
+                                    {statusLabels[s.status]}
+                                </span>
+                            ),
+                        },
+                    ]}
+                    actions={(s) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" asChild>
+                                <Link href={admin.sales.show(s.id)}>
+                                    <Eye className="size-4" />
+                                </Link>
+                            </Button>
+                            {s.status === 'pending' && (
+                                <Button size="sm" variant="ghost" onClick={() => router.post(admin.sales.complete(s.id), {}, { preserveScroll: true })}>
+                                    Confirmar
+                                </Button>
                             )}
-                        </tbody>
-                    </table>
-                </div>
+                            {(s.status === 'completed' || s.status === 'pending') && (
+                                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelSale(s)}>
+                                    Cancelar
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                />
             </div>
 
             {/* Modal nueva venta */}

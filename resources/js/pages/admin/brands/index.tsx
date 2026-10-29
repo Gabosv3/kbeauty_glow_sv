@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -81,53 +82,40 @@ return;
                     </Button>
                 </div>
 
-                <div className="rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Nombre</th>
-                                <th className="px-4 py-3 text-left font-medium">Descripción</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {brands.length === 0 && (
-                                <tr>
-                                    <td colSpan={4} className="px-4 py-8 text-center text-muted-foreground">
-                                        No hay marcas registradas.
-                                    </td>
-                                </tr>
-                            )}
-                            {brands.map((brand) => (
-                                <tr key={brand.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-medium">{brand.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{brand.description ?? '—'}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <Badge variant={brand.active ? 'default' : 'secondary'}>
-                                            {brand.active ? 'Activa' : 'Inactiva'}
-                                        </Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" onClick={() => openEdit(brand)}>
-                                                <Pencil className="size-4" />
-                                            </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="ghost"
-                                                className="text-destructive"
-                                                onClick={() => deleteBrand(brand)}
-                                            >
-                                                <Trash2 className="size-4" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    data={brands}
+                    rowKey={(brand) => brand.id}
+                    searchPlaceholder="Buscar marca..."
+                    emptyMessage="No hay marcas registradas."
+                    columns={[
+                        { key: 'name', header: 'Nombre', value: (b) => b.name, searchable: true, className: 'font-medium' },
+                        {
+                            key: 'description',
+                            header: 'Descripción',
+                            value: (b) => b.description,
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                            cell: (b) => b.description ?? '—',
+                        },
+                        {
+                            key: 'active',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (b) => (b.active ? 'Activa' : 'Inactiva'),
+                            cell: (b) => <Badge variant={b.active ? 'default' : 'secondary'}>{b.active ? 'Activa' : 'Inactiva'}</Badge>,
+                        },
+                    ]}
+                    actions={(brand) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => openEdit(brand)}>
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteBrand(brand)}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </div>
+                    )}
+                />
             </div>
 
             {/* Dialog: Nueva marca */}

@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { LayoutGrid, LogOut, Palette, Settings, Store, UserRound, Users } from 'lucide-react';
+import { LayoutGrid, LogOut, Palette, ShieldCheck, Settings, Store, UserRound, Users } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -36,6 +36,7 @@ export function UserMenuContent({ user }: Props) {
                 {[
                     { href: '/settings/profile', label: 'Mi perfil', icon: UserRound },
                     { href: '/settings/teams', label: 'Equipo', icon: Users },
+                    { href: '/settings/security', label: 'Seguridad y 2FA', icon: ShieldCheck },
                     { href: '/settings/appearance', label: 'Apariencia', icon: Palette },
                     { href: admin.settings.edit, label: 'Ajustes de la tienda', icon: Settings },
                     { href: admin.dashboard, label: 'Dashboard', icon: LayoutGrid },

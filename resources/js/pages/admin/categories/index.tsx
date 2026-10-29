@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -74,50 +75,41 @@ return;
                     </Button>
                 </div>
 
-                <div className="rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Nombre</th>
-                                <th className="px-4 py-3 text-left font-medium">Descripción</th>
-                                <th className="px-4 py-3 text-center font-medium">Productos</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {categories.map((cat) => (
-                                <tr key={cat.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-medium">{cat.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{cat.description ?? '—'}</td>
-                                    <td className="px-4 py-3 text-center">{cat.products_count ?? 0}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <Badge variant={cat.active ? 'default' : 'secondary'}>
-                                            {cat.active ? 'Activa' : 'Inactiva'}
-                                        </Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" onClick={() => openEdit(cat)}>
-                                                <Pencil className="size-4" />
-                                            </Button>
-                                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteCategory(cat)}>
-                                                <Trash2 className="size-4" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {categories.length === 0 && (
-                                <tr>
-                                    <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
-                                        No hay categorías registradas.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    data={categories}
+                    rowKey={(cat) => cat.id}
+                    searchPlaceholder="Buscar categoría..."
+                    emptyMessage="No hay categorías registradas."
+                    columns={[
+                        { key: 'name', header: 'Nombre', value: (c) => c.name, searchable: true, className: 'font-medium' },
+                        {
+                            key: 'description',
+                            header: 'Descripción',
+                            value: (c) => c.description,
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                            cell: (c) => c.description ?? '—',
+                        },
+                        { key: 'products', header: 'Productos', align: 'center', value: (c) => c.products_count ?? 0, cell: (c) => c.products_count ?? 0 },
+                        {
+                            key: 'active',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (c) => (c.active ? 'Activa' : 'Inactiva'),
+                            cell: (c) => <Badge variant={c.active ? 'default' : 'secondary'}>{c.active ? 'Activa' : 'Inactiva'}</Badge>,
+                        },
+                    ]}
+                    actions={(cat) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => openEdit(cat)}>
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteCategory(cat)}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </div>
+                    )}
+                />
             </div>
 
             {/* Modal crear */}

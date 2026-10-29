@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\Auth\LoginController as AdminLoginController;
+use App\Http\Controllers\TwoFactorChallengeController;
 use App\Http\Controllers\Admin\BrandController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\CarrierController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ShipmentController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\ProductImageController;
 use App\Http\Controllers\Admin\PurchaseShipmentController;
@@ -44,6 +47,8 @@ Route::prefix('store')->name('store.')->middleware(LinkPanelUserToCustomer::clas
         Route::middleware('guest:customer')->group(function () {
             Route::get('/login', [CustomerAuthController::class, 'login'])->name('account.login');
             Route::post('/login', [CustomerAuthController::class, 'authenticate'])->middleware('throttle:10,1');
+            Route::get('/verificacion', [TwoFactorChallengeController::class, 'storeCreate'])->name('account.two-factor');
+            Route::post('/verificacion', [TwoFactorChallengeController::class, 'storeStore'])->middleware('throttle:10,1');
             Route::get('/registro', [CustomerAuthController::class, 'register'])->name('account.register');
             Route::post('/registro', [CustomerAuthController::class, 'store'])->middleware('throttle:10,1');
         });
@@ -60,7 +65,9 @@ Route::prefix('store')->name('store.')->middleware(LinkPanelUserToCustomer::clas
 Route::prefix('administrativo')->name('admin.')->group(function () {
     Route::middleware('guest')->group(function () {
         Route::get('login', [AdminLoginController::class, 'create'])->name('login');
-        Route::post('login', [AdminLoginController::class, 'store']);
+        Route::post('login', [AdminLoginController::class, 'store'])->middleware('throttle:10,1');
+        Route::get('verificacion', [TwoFactorChallengeController::class, 'adminCreate'])->name('two-factor');
+        Route::post('verificacion', [TwoFactorChallengeController::class, 'adminStore'])->middleware('throttle:10,1');
     });
 
     Route::middleware(EnsureAdminAuth::class)->group(function () {
@@ -83,6 +90,18 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
         Route::get('quotes/{quote}/print', [QuoteController::class, 'print'])->name('quotes.print');
         Route::post('quotes/{quote}/status', [QuoteController::class, 'status'])->name('quotes.status');
         Route::delete('quotes/{quote}', [QuoteController::class, 'destroy'])->name('quotes.destroy');
+
+        // Logística de salida
+        Route::get('logistics', [ShipmentController::class, 'index'])->name('logistics.index');
+        Route::post('logistics/shipments', [ShipmentController::class, 'store'])->name('logistics.shipments.store');
+        Route::put('logistics/shipments/{shipment}', [ShipmentController::class, 'update'])->name('logistics.shipments.update');
+        Route::post('logistics/shipments/{shipment}/status', [ShipmentController::class, 'status'])->name('logistics.shipments.status');
+        Route::post('logistics/shipments/{shipment}/date', [ShipmentController::class, 'date'])->name('logistics.shipments.date');
+        Route::get('logistics/shipments/{shipment}/label', [ShipmentController::class, 'label'])->name('logistics.shipments.label');
+        Route::delete('logistics/shipments/{shipment}', [ShipmentController::class, 'destroy'])->name('logistics.shipments.destroy');
+        Route::post('logistics/carriers', [CarrierController::class, 'store'])->name('logistics.carriers.store');
+        Route::put('logistics/carriers/{carrier}', [CarrierController::class, 'update'])->name('logistics.carriers.update');
+        Route::delete('logistics/carriers/{carrier}', [CarrierController::class, 'destroy'])->name('logistics.carriers.destroy');
 
         // Destacados y ajustes de la tienda
         Route::get('featured', [FeaturedController::class, 'index'])->name('featured.index');
@@ -111,6 +130,7 @@ Route::prefix('administrativo')->name('admin.')->group(function () {
         // Productos
         Route::get('products', [ProductController::class, 'index'])->name('products.index');
         Route::get('products/export', [ProductController::class, 'export'])->name('products.export');
+        Route::get('products/export-urbby', [ProductController::class, 'exportUrbby'])->name('products.export-urbby');
         Route::post('products', [ProductController::class, 'store'])->name('products.store');
         Route::put('products/{product}', [ProductController::class, 'update'])->name('products.update');
         Route::delete('products/{product}', [ProductController::class, 'destroy'])->name('products.destroy');

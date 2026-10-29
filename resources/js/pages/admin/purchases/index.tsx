@@ -2,6 +2,7 @@
 import { Head } from '@inertiajs/react';
 import { Eye, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -120,66 +121,60 @@ return;
                     </Button>
                 </div>
 
-                <div className="rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Referencia</th>
-                                <th className="px-4 py-3 text-left font-medium">Proveedor</th>
-                                <th className="px-4 py-3 text-left font-medium">Registrada por</th>
-                                <th className="px-4 py-3 text-right font-medium">Total</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {purchases.map((p) => (
-                                <tr key={p.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-mono text-xs">{p.reference}</td>
-                                    <td className="px-4 py-3">{p.supplier?.name ?? 'sin proveedor'}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{p.user?.name ?? 'desconocido'}</td>
-                                    <td className="px-4 py-3 text-right font-medium">${p.total}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[p.status]}`}>
-                                            {statusLabels[p.status]}
-                                        </span>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" asChild>
-                                                <Link href={admin.purchases.show(p.id)}>
-                                                    <Eye className="size-4" />
-                                                </Link>
-                                            </Button>
-                                            {p.status === 'pending' && (
-                                                <>
-                                                    <Button size="sm" variant="outline" onClick={() => orderPurchase(p)}>
-                                                        Ordenar
-                                                    </Button>
-                                                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelOrder(p)}>
-                                                        Cancelar
-                                                    </Button>
-                                                </>
-                                            )}
-                                            {p.status === 'ordered' && (
-                                                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelOrder(p)}>
-                                                    Cancelar
-                                                </Button>
-                                            )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {purchases.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
-                                        No hay compras registradas.
-                                    </td>
-                                </tr>
+                <DataTable
+                    data={purchases}
+                    rowKey={(p) => p.id}
+                    searchPlaceholder="Buscar compra..."
+                    emptyMessage="No hay compras registradas."
+                    columns={[
+                        { key: 'reference', header: 'Referencia', value: (p) => p.reference, searchable: true, className: 'font-mono text-xs' },
+                        { key: 'supplier', header: 'Proveedor', value: (p) => p.supplier?.name ?? 'sin proveedor', searchable: true },
+                        {
+                            key: 'user',
+                            header: 'Registrada por',
+                            value: (p) => p.user?.name ?? 'desconocido',
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                        },
+                        { key: 'total', header: 'Total', align: 'right', value: (p) => Number(p.total), className: 'font-medium', cell: (p) => `$${p.total}` },
+                        {
+                            key: 'status',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (p) => statusLabels[p.status],
+                            searchable: true,
+                            cell: (p) => (
+                                <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColors[p.status]}`}>
+                                    {statusLabels[p.status]}
+                                </span>
+                            ),
+                        },
+                    ]}
+                    actions={(p) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" asChild>
+                                <Link href={admin.purchases.show(p.id)}>
+                                    <Eye className="size-4" />
+                                </Link>
+                            </Button>
+                            {p.status === 'pending' && (
+                                <>
+                                    <Button size="sm" variant="outline" onClick={() => orderPurchase(p)}>
+                                        Ordenar
+                                    </Button>
+                                    <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelOrder(p)}>
+                                        Cancelar
+                                    </Button>
+                                </>
                             )}
-                        </tbody>
-                    </table>
-                </div>
+                            {p.status === 'ordered' && (
+                                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => cancelOrder(p)}>
+                                    Cancelar
+                                </Button>
+                            )}
+                        </div>
+                    )}
+                />
             </div>
 
             <Dialog open={openCreate} onOpenChange={setOpenCreate}>

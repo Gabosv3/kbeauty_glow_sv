@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -137,56 +138,51 @@ export default function DiscountsIndex({ discounts, categories, products }: Read
                     </Button>
                 </div>
 
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Nombre</th>
-                                <th className="px-4 py-3 text-left font-medium">Aplica a</th>
-                                <th className="px-4 py-3 text-left font-medium">Descuento</th>
-                                <th className="px-4 py-3 text-left font-medium">Vigencia</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {discounts.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                                        Aún no hay descuentos.
-                                    </td>
-                                </tr>
-                            )}
-                            {discounts.map((d) => {
+                <DataTable
+                    data={discounts}
+                    rowKey={(d) => d.id}
+                    searchPlaceholder="Buscar descuento..."
+                    emptyMessage="Aún no hay descuentos."
+                    columns={[
+                        { key: 'name', header: 'Nombre', value: (d) => d.name, searchable: true, className: 'font-medium' },
+                        { key: 'target', header: 'Aplica a', value: (d) => target(d), searchable: true, className: 'text-muted-foreground' },
+                        {
+                            key: 'value',
+                            header: 'Descuento',
+                            value: (d) => Number(d.value),
+                            cell: (d) => (d.type === 'percent' ? `${Number(d.value)}%` : `$${Number(d.value).toFixed(2)}`),
+                        },
+                        {
+                            key: 'validity',
+                            header: 'Vigencia',
+                            value: (d) => d.ends_at ?? d.starts_at,
+                            className: 'text-muted-foreground',
+                            cell: (d) => (d.starts_at || d.ends_at ? `${day(d.starts_at) || '—'} → ${day(d.ends_at) || '—'}` : 'Sin límite'),
+                        },
+                        {
+                            key: 'status',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (d) => statusOf(d).label,
+                            searchable: true,
+                            cell: (d) => {
                                 const status = statusOf(d);
 
-                                return (
-                                    <tr key={d.id} className="hover:bg-muted/30">
-                                        <td className="px-4 py-3 font-medium">{d.name}</td>
-                                        <td className="px-4 py-3 text-muted-foreground">{target(d)}</td>
-                                        <td className="px-4 py-3">{d.type === 'percent' ? `${Number(d.value)}%` : `$${Number(d.value).toFixed(2)}`}</td>
-                                        <td className="px-4 py-3 text-muted-foreground">
-                                            {d.starts_at || d.ends_at ? `${day(d.starts_at) || '—'} → ${day(d.ends_at) || '—'}` : 'Sin límite'}
-                                        </td>
-                                        <td className="px-4 py-3 text-center">
-                                            <Badge variant={status.active ? 'default' : 'secondary'}>{status.label}</Badge>
-                                        </td>
-                                        <td className="px-4 py-3 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button size="icon" variant="ghost" onClick={() => openEdit(d)} aria-label={`Editar ${d.name}`}>
-                                                    <Pencil className="size-4" />
-                                                </Button>
-                                                <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(d)} aria-label={`Eliminar ${d.name}`}>
-                                                    <Trash2 className="size-4" />
-                                                </Button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                                return <Badge variant={status.active ? 'default' : 'secondary'}>{status.label}</Badge>;
+                            },
+                        },
+                    ]}
+                    actions={(d) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => openEdit(d)} aria-label={`Editar ${d.name}`}>
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => remove(d)} aria-label={`Eliminar ${d.name}`}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </div>
+                    )}
+                />
             </div>
 
             <Dialog open={open} onOpenChange={setOpen}>

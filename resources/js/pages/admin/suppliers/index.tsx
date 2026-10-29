@@ -1,6 +1,7 @@
 import { Head, router, useForm } from '@inertiajs/react';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -82,55 +83,55 @@ return;
                     </Button>
                 </div>
 
-                <div className="rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Nombre</th>
-                                <th className="px-4 py-3 text-left font-medium">Contacto</th>
-                                <th className="px-4 py-3 text-left font-medium">Email / Tel</th>
-                                <th className="px-4 py-3 text-center font-medium">Compras</th>
-                                <th className="px-4 py-3 text-center font-medium">Estado</th>
-                                <th className="px-4 py-3 text-right font-medium">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {suppliers.map((s) => (
-                                <tr key={s.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3 font-medium">{s.name}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{s.contact_name ?? '—'}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">
-                                        <div>{s.email ?? '—'}</div>
-                                        <div>{s.phone ?? '—'}</div>
-                                    </td>
-                                    <td className="px-4 py-3 text-center">{s.purchases_count ?? 0}</td>
-                                    <td className="px-4 py-3 text-center">
-                                        <Badge variant={s.active ? 'default' : 'secondary'}>
-                                            {s.active ? 'Activo' : 'Inactivo'}
-                                        </Badge>
-                                    </td>
-                                    <td className="px-4 py-3 text-right">
-                                        <div className="flex justify-end gap-2">
-                                            <Button size="icon" variant="ghost" onClick={() => openEdit(s)}>
-                                                <Pencil className="size-4" />
-                                            </Button>
-                                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteSupplier(s)}>
-                                                <Trash2 className="size-4" />
-                                            </Button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
-                            {suppliers.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground">
-                                        No hay proveedores registrados.
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
-                </div>
+                <DataTable
+                    data={suppliers}
+                    rowKey={(s) => s.id}
+                    searchPlaceholder="Buscar proveedor..."
+                    emptyMessage="No hay proveedores registrados."
+                    extraSearch={(s) => [s.phone]}
+                    columns={[
+                        { key: 'name', header: 'Nombre', value: (s) => s.name, searchable: true, className: 'font-medium' },
+                        {
+                            key: 'contact',
+                            header: 'Contacto',
+                            value: (s) => s.contact_name,
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                            cell: (s) => s.contact_name ?? '—',
+                        },
+                        {
+                            key: 'email',
+                            header: 'Email / Tel',
+                            value: (s) => s.email,
+                            searchable: true,
+                            className: 'text-muted-foreground',
+                            cell: (s) => (
+                                <>
+                                    <div>{s.email ?? '—'}</div>
+                                    <div>{s.phone ?? '—'}</div>
+                                </>
+                            ),
+                        },
+                        { key: 'purchases', header: 'Compras', align: 'center', value: (s) => s.purchases_count ?? 0, cell: (s) => s.purchases_count ?? 0 },
+                        {
+                            key: 'active',
+                            header: 'Estado',
+                            align: 'center',
+                            value: (s) => (s.active ? 'Activo' : 'Inactivo'),
+                            cell: (s) => <Badge variant={s.active ? 'default' : 'secondary'}>{s.active ? 'Activo' : 'Inactivo'}</Badge>,
+                        },
+                    ]}
+                    actions={(s) => (
+                        <div className="flex justify-end gap-2">
+                            <Button size="icon" variant="ghost" onClick={() => openEdit(s)}>
+                                <Pencil className="size-4" />
+                            </Button>
+                            <Button size="icon" variant="ghost" className="text-destructive" onClick={() => deleteSupplier(s)}>
+                                <Trash2 className="size-4" />
+                            </Button>
+                        </div>
+                    )}
+                />
             </div>
 
             {/* Modal crear */}

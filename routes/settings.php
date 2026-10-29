@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Settings\ProfileController;
+use App\Http\Controllers\Settings\SecurityController;
 use App\Http\Controllers\Teams\TeamController;
 use App\Http\Controllers\Teams\TeamInvitationController;
 use App\Http\Controllers\Teams\TeamMemberController;
@@ -13,6 +14,12 @@ Route::middleware(['auth'])->group(function () {
     Route::get('settings/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('settings/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('settings/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('settings/security', [SecurityController::class, 'edit'])->name('security.edit');
+    Route::post('settings/security/two-factor', [SecurityController::class, 'enable'])->name('security.enable');
+    Route::post('settings/security/two-factor/confirm', [SecurityController::class, 'confirm'])->middleware('throttle:10,1')->name('security.confirm');
+    Route::post('settings/security/two-factor/recovery-codes', [SecurityController::class, 'regenerate'])->middleware('throttle:10,1')->name('security.regenerate');
+    Route::delete('settings/security/two-factor', [SecurityController::class, 'disable'])->middleware('throttle:10,1')->name('security.disable');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
 

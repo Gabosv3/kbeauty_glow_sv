@@ -34,6 +34,7 @@ export const adminNavGroups: NavGroup[] = [
         items: [
             { title: 'Ventas', href: admin.sales.index, icon: ShoppingBag },
             { title: 'Cotizaciones', href: admin.quotes.index, icon: FileText },
+            { title: 'Logística', href: admin.logistics.index, icon: Truck },
             { title: 'Clientes', href: admin.customers.index, icon: UserRound },
         ],
     },
@@ -72,6 +73,7 @@ export const adminNavGroups: NavGroup[] = [
 /** Acciones de "Crear": llevan a la lista y abren el formulario de alta (?new=1). */
 export const adminCreateActions: NavItem[] = [
     { title: 'Nueva venta', href: `${admin.sales.index}?new=1`, icon: ShoppingBag },
+    { title: 'Nuevo despacho', href: `${admin.logistics.index}?new=1`, icon: Truck },
     { title: 'Nueva cotización', href: `${admin.quotes.index}?new=1`, icon: FileText },
     { title: 'Nuevo producto', href: `${admin.products.index}?new=1`, icon: Package },
     { title: 'Nueva compra', href: `${admin.purchases.index}?new=1`, icon: ShoppingCart },

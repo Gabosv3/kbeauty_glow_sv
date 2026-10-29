@@ -1,7 +1,6 @@
 import { Head } from '@inertiajs/react';
-import { useMemo, useState } from 'react';
+import { DataTable } from '@/components/data-table';
 import Heading from '@/components/heading';
-import { Input } from '@/components/ui/input';
 
 type Customer = {
     id: number;
@@ -24,16 +23,6 @@ const money = (n: number) => `$${n.toFixed(2)}`;
 const day = (iso: string | null) => (iso ? new Date(iso).toLocaleDateString('es-SV', { dateStyle: 'medium' }) : '—');
 
 export default function CustomersIndex({ customers, stats }: Readonly<Props>) {
-    const [search, setSearch] = useState('');
-
-    const filtered = useMemo(() => {
-        const needle = search.trim().toLowerCase();
-
-        return needle
-            ? customers.filter((c) => `${c.name} ${c.email} ${c.phone ?? ''}`.toLowerCase().includes(needle))
-            : customers;
-    }, [customers, search]);
-
     const cards = [
         { label: 'Clientes registrados', value: String(stats.total) },
         { label: 'Con al menos un pedido', value: String(stats.buyers) },
@@ -55,53 +44,49 @@ export default function CustomersIndex({ customers, stats }: Readonly<Props>) {
                     ))}
                 </div>
 
-                <Input
-                    type="search"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Buscar por nombre, correo o teléfono…"
-                    className="max-w-sm"
+                <DataTable
+                    data={customers}
+                    rowKey={(c) => c.id}
+                    searchPlaceholder="Buscar por nombre, correo o teléfono…"
+                    emptyMessage="Aún no hay clientes registrados."
+                    extraSearch={(c) => [c.phone]}
+                    columns={[
+                        {
+                            key: 'name',
+                            header: 'Cliente',
+                            value: (c) => c.name,
+                            searchable: true,
+                            cell: (c) => (
+                                <>
+                                    <p className="font-medium">{c.name}</p>
+                                    <p className="text-xs text-muted-foreground">Desde {day(c.created_at)}</p>
+                                </>
+                            ),
+                        },
+                        {
+                            key: 'email',
+                            header: 'Contacto',
+                            value: (c) => c.email,
+                            searchable: true,
+                            cell: (c) => (
+                                <>
+                                    <p>{c.email}</p>
+                                    <p className="text-xs text-muted-foreground">{c.phone ?? '—'}</p>
+                                </>
+                            ),
+                        },
+                        { key: 'location', header: 'Ubicación', value: (c) => c.location, className: 'text-muted-foreground', cell: (c) => c.location || '—' },
+                        { key: 'orders', header: 'Pedidos', align: 'center', value: (c) => c.orders_count },
+                        { key: 'spent', header: 'Total gastado', align: 'right', value: (c) => c.total_spent, className: 'font-mono', cell: (c) => money(c.total_spent) },
+                        {
+                            key: 'last',
+                            header: 'Último pedido',
+                            value: (c) => (c.last_order_at ? new Date(c.last_order_at).getTime() : null),
+                            className: 'text-muted-foreground',
+                            cell: (c) => day(c.last_order_at),
+                        },
+                    ]}
                 />
-
-                <div className="overflow-x-auto rounded-lg border">
-                    <table className="w-full text-sm">
-                        <thead className="border-b bg-muted/50">
-                            <tr>
-                                <th className="px-4 py-3 text-left font-medium">Cliente</th>
-                                <th className="px-4 py-3 text-left font-medium">Contacto</th>
-                                <th className="px-4 py-3 text-left font-medium">Ubicación</th>
-                                <th className="px-4 py-3 text-center font-medium">Pedidos</th>
-                                <th className="px-4 py-3 text-right font-medium">Total gastado</th>
-                                <th className="px-4 py-3 text-left font-medium">Último pedido</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y">
-                            {filtered.length === 0 && (
-                                <tr>
-                                    <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground">
-                                        {customers.length === 0 ? 'Aún no hay clientes registrados.' : 'Sin resultados.'}
-                                    </td>
-                                </tr>
-                            )}
-                            {filtered.map((c) => (
-                                <tr key={c.id} className="hover:bg-muted/30">
-                                    <td className="px-4 py-3">
-                                        <p className="font-medium">{c.name}</p>
-                                        <p className="text-xs text-muted-foreground">Desde {day(c.created_at)}</p>
-                                    </td>
-                                    <td className="px-4 py-3">
-                                        <p>{c.email}</p>
-                                        <p className="text-xs text-muted-foreground">{c.phone ?? '—'}</p>
-                                    </td>
-                                    <td className="px-4 py-3 text-muted-foreground">{c.location || '—'}</td>
-                                    <td className="px-4 py-3 text-center">{c.orders_count}</td>
-                                    <td className="px-4 py-3 text-right font-mono">{money(c.total_spent)}</td>
-                                    <td className="px-4 py-3 text-muted-foreground">{day(c.last_order_at)}</td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </>
     );
