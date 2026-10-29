@@ -1,8 +1,12 @@
 import { router } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import { Plus, Search } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { UserMenuContent } from '@/components/user-menu-content';
+import { useInitials } from '@/hooks/use-initials';
 import { adminCreateActions, adminNavGroups } from '@/lib/admin-nav';
 import { toUrl } from '@/lib/utils';
 
@@ -68,7 +72,7 @@ export function AdminQuickBar() {
     return (
         <div className="ml-auto flex items-center gap-2">
             <div className="relative hidden sm:block">
-                <Search className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
+                <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground" />
                 <input
                     ref={inputRef}
                     value={query}
@@ -82,7 +86,7 @@ export function AdminQuickBar() {
                     onKeyDown={onKeyDown}
                     placeholder="Buscar sección…"
                     aria-label="Buscar sección del panel"
-                    className="h-9 w-56 rounded-full border border-input bg-background pr-12 pl-9 text-sm shadow-xs focus:ring-2 focus:ring-ring/40 focus:outline-none lg:w-72"
+                    className="h-10 w-64 rounded-full border border-input bg-background pr-14 pl-10 text-sm shadow-xs focus:ring-2 focus:ring-ring/40 focus:outline-none lg:w-96 xl:w-[32rem]"
                 />
                 <kbd className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 rounded border bg-muted px-1.5 text-[10px] font-medium text-muted-foreground">Ctrl K</kbd>
 
@@ -122,6 +126,35 @@ export function AdminQuickBar() {
                     ))}
                 </DropdownMenuContent>
             </DropdownMenu>
+
+            <HeaderUserMenu />
         </div>
+    );
+}
+
+/** Usuario con sesión: avatar con menú (perfil, ajustes, tienda, cerrar sesión). */
+function HeaderUserMenu() {
+    const { auth } = usePage().props;
+    const getInitials = useInitials();
+
+    if (!auth.user) {
+        return null;
+    }
+
+    return (
+        <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+                <button type="button" aria-label="Menú de usuario" className="flex items-center gap-2 rounded-full border bg-background py-1 pr-3 pl-1 text-sm shadow-xs transition-colors hover:bg-accent">
+                    <Avatar className="size-8">
+                        {auth.user.avatar ? <AvatarImage src={auth.user.avatar} alt={auth.user.name} /> : null}
+                        <AvatarFallback className="text-xs">{getInitials(auth.user.name)}</AvatarFallback>
+                    </Avatar>
+                    <span className="hidden max-w-32 truncate font-medium lg:block">{auth.user.name.split(' ')[0]}</span>
+                </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64 rounded-xl">
+                <UserMenuContent user={auth.user} />
+            </DropdownMenuContent>
+        </DropdownMenu>
     );
 }

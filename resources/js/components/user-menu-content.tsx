@@ -1,5 +1,5 @@
 import { Link, router } from '@inertiajs/react';
-import { LogOut, Settings } from 'lucide-react';
+import { LayoutGrid, LogOut, Palette, Settings, Store, UserRound, Users } from 'lucide-react';
 import {
     DropdownMenuGroup,
     DropdownMenuItem,
@@ -33,17 +33,21 @@ export function UserMenuContent({ user }: Props) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-                <DropdownMenuItem asChild>
-                    <Link
-                        className="block w-full cursor-pointer"
-                        href={admin.dashboard}
-                        prefetch
-                        onClick={cleanup}
-                    >
-                        <Settings className="mr-2" />
-                        Dashboard
-                    </Link>
-                </DropdownMenuItem>
+                {[
+                    { href: '/settings/profile', label: 'Mi perfil', icon: UserRound },
+                    { href: '/settings/teams', label: 'Equipo', icon: Users },
+                    { href: '/settings/appearance', label: 'Apariencia', icon: Palette },
+                    { href: admin.settings.edit, label: 'Ajustes de la tienda', icon: Settings },
+                    { href: admin.dashboard, label: 'Dashboard', icon: LayoutGrid },
+                    { href: '/store', label: 'Ver tienda', icon: Store },
+                ].map(({ href, label, icon: Icon }) => (
+                    <DropdownMenuItem key={label} asChild>
+                        <Link className="flex w-full cursor-pointer items-center" href={href} prefetch onClick={cleanup}>
+                            <Icon className="mr-2 size-4" />
+                            {label}
+                        </Link>
+                    </DropdownMenuItem>
+                ))}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>

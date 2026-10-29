@@ -77,4 +77,5 @@ export const adminCreateActions: NavItem[] = [
     { title: 'Nueva compra', href: `${admin.purchases.index}?new=1`, icon: ShoppingCart },
     { title: 'Nuevo cupón', href: `${admin.coupons.index}?new=1`, icon: Ticket },
     { title: 'Nuevo descuento', href: `${admin.discounts.index}?new=1`, icon: Percent },
+    { title: "Nuevo usuario", href: `${admin.users.index}?new=1`, icon: Users },
 ];
