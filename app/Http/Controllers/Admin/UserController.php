@@ -6,6 +6,7 @@ use App\Enums\TeamRole;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -52,6 +53,9 @@ class UserController extends AdminController
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
+            // La tabla users exige estos dos campos (heredados del starter kit con WorkOS).
+            'workos_id' => 'local_'.Str::uuid(),
+            'avatar' => '',
             'current_team_id' => $team->id,
         ]);
 
