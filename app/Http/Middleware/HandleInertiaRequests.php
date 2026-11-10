@@ -36,7 +36,7 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        $user = $request->user();
+        $user = $request->user('web'); // el guard por defecto cambia a «customer» en las rutas de cuenta
 
         return [
             ...parent::share($request),
